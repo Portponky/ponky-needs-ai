@@ -18,7 +18,7 @@ sources = Glob("src/*.cpp")
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        "test/bin/libutilityai.{}.{}.framework/libutilityai.{}.{}".format(
+        "test/addons/utility-ai/bin/libutilityai.{}.{}.framework/libutilityai.{}.{}".format(
             env["platform"], env["target"], env["platform"], env["target"]
         ),
         source=sources,
@@ -26,17 +26,17 @@ if env["platform"] == "macos":
 elif env["platform"] == "ios":
     if env["ios_simulator"]:
         library = env.StaticLibrary(
-            "test/bin/libutilityai.{}.{}.simulator.a".format(env["platform"], env["target"]),
+            "test/addons/utility-ai/bin/libutilityai.{}.{}.simulator.a".format(env["platform"], env["target"]),
             source=sources,
         )
     else:
         library = env.StaticLibrary(
-            "test/bin/libutilityai.{}.{}.a".format(env["platform"], env["target"]),
+            "test/addons/utility-ai/bin/libutilityai.{}.{}.a".format(env["platform"], env["target"]),
             source=sources,
         )
 else:
     library = env.SharedLibrary(
-        "test/bin/libutilityai{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+        "test/addons/utility-ai/bin/libutilityai{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
         source=sources,
     )
 
