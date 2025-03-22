@@ -1,5 +1,7 @@
 #include "register_types.h"
 
+#include "need.h"
+
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
@@ -10,6 +12,8 @@ void initialize_utility_ai(ModuleInitializationLevel p_level)
 {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
+
+    GDREGISTER_RUNTIME_CLASS(Need);
 }
 
 void uninitialize_utility_ai(ModuleInitializationLevel p_level)
