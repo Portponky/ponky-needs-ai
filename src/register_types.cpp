@@ -1,6 +1,8 @@
 #include "register_types.h"
 
 #include "need.h"
+#include "agent.h"
+#include "action.h"
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
@@ -14,6 +16,8 @@ void initialize_utility_ai(ModuleInitializationLevel p_level)
 		return;
 
     GDREGISTER_RUNTIME_CLASS(Need);
+    GDREGISTER_RUNTIME_CLASS(Agent);
+    GDREGISTER_RUNTIME_CLASS(Action);
 }
 
 void uninitialize_utility_ai(ModuleInitializationLevel p_level)
