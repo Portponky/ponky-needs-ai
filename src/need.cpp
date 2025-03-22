@@ -17,17 +17,17 @@ void Need::_bind_methods()
     ClassDB::bind_method(D_METHOD("set_attenuation_weight", "p_weight"), &Need::set_attenuation_weight);
     ClassDB::bind_method(D_METHOD("get_attenuation_weight"), &Need::get_attenuation_weight);
 
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "attenuation_weight"), "set_attenuation_weight", "get_attenuation_weight");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "attenuation_weight", PROPERTY_HINT_RANGE, "0.0,2.0,or_greater"), "set_attenuation_weight", "get_attenuation_weight");
 
     ClassDB::bind_method(D_METHOD("set_decay_time", "p_time"), &Need::set_decay_time);
     ClassDB::bind_method(D_METHOD("get_decay_time"), &Need::get_decay_time);
 
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "decay_time"), "set_decay_time", "get_decay_time");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "decay_time", PROPERTY_HINT_RANGE, "0.0,600.0,or_greater"), "set_decay_time", "get_decay_time");
 
     ClassDB::bind_method(D_METHOD("set_initial_value", "p_value"), &Need::set_initial_value);
     ClassDB::bind_method(D_METHOD("get_initial_value"), &Need::get_initial_value);
 
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "initial_value"), "set_initial_value", "get_initial_value");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "initial_value", PROPERTY_HINT_RANGE, "0.0,1.0"), "set_initial_value", "get_initial_value");
 }
 
 void Need::set_name(const String& name)
