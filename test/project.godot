@@ -14,3 +14,7 @@ config/name="test"
 run/main_scene="uid://0u8x6wmo0j2b"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0

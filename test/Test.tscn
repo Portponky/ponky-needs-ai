@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://0u8x6wmo0j2b"]
+[gd_scene load_steps=5 format=3 uid="uid://0u8x6wmo0j2b"]
 
 [ext_resource type="Script" uid="uid://7yrboufqe7rg" path="res://Test.gd" id="1_myinc"]
+[ext_resource type="PackedScene" uid="uid://dsijjepqyn47p" path="res://Person.tscn" id="2_njov2"]
 
 [sub_resource type="Curve" id="Curve_myinc"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.816667, 0.292135), 0.948034, 0.948034, 0, 0, Vector2(1, 1), 8.89887, 0.0, 0, 0]
@@ -13,3 +14,12 @@ response = SubResource("Curve_myinc")
 [node name="Test" type="Node2D"]
 script = ExtResource("1_myinc")
 test = SubResource("Need_njov2")
+
+[node name="Person" parent="." instance=ExtResource("2_njov2")]
+position = Vector2(249, 95)
+
+[node name="Person2" parent="." instance=ExtResource("2_njov2")]
+position = Vector2(329, 173)
+
+[node name="Person3" parent="." instance=ExtResource("2_njov2")]
+position = Vector2(247, 273)

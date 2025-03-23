@@ -5,20 +5,14 @@
 
 using namespace godot;
 
-//UtilityServer* UtilityServer::singleton = nullptr;
+UtilityServer* UtilityServer::s_singleton{nullptr};
 
 void UtilityServer::thread_func()
 {
     uint64_t msdelay = 1000;
 
-    while (!exit_thread)
+    while (!m_exit_thread)
     {
-        //if (!ac->empty())
-        {
-            lock();
-            //ac->register_rooms();
-            unlock();
-        }
         OS::get_singleton()->delay_usec(msdelay * 1000);
     }
 }
@@ -28,49 +22,55 @@ void UtilityServer::_bind_methods()
 
 }
 
+UtilityServer* UtilityServer::get_singleton()
+{
+    return s_singleton;
+}
+
 Error UtilityServer::init()
 {
-    exit_thread = false;
-    mutex = memnew(Mutex);
-    thread = memnew(Thread);
-    thread->reference(); // Fudge: The thread seems to get unreffed an extra time whilst starting
-    thread->start(callable_mp(this, &UtilityServer::thread_func));
+    m_exit_thread = false;
+    m_mutex = memnew(Mutex);
+    m_thread = memnew(Thread);
+    m_thread->reference(); // Fudge: The thread seems to get unreffed an extra time whilst starting
+    m_thread->start(callable_mp(this, &UtilityServer::thread_func));
     return OK;
 }
 
 void UtilityServer::finish()
 {
-    if (!thread)
+    if (!m_thread)
         return;
 
-    exit_thread = true;
-    thread->wait_to_finish();
+    m_exit_thread = true;
+    m_thread->wait_to_finish();
 
-    memdelete(thread);
+    memdelete(m_thread);
 
-    if (mutex)
-        memdelete(mutex);
+    if (m_mutex)
+        memdelete(m_mutex);
 
-    thread = nullptr;
+    m_thread = nullptr;
 }
 
-
-void UtilityServer::lock()
+RID UtilityServer::create_agent()
 {
-    if (!thread || !mutex)
-        return;
-
-    mutex->lock();
+    return m_agents.make_rid(InternalAgent());
 }
 
-void UtilityServer::unlock()
+void UtilityServer::free_rid(godot::RID rid)
 {
-    if (!thread || !mutex)
-        return;
-
-    mutex->unlock();
+    if (m_agents.owns(rid))
+    {
+        m_agents.free(rid);
+    }
+    else
+        ERR_FAIL_MSG("Invalid ID.");
 }
 
-UtilityServer::UtilityServer() = default;
+UtilityServer::UtilityServer()
+{
+    s_singleton = this;
+}
 
 UtilityServer::~UtilityServer() = default;

@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://dsijjepqyn47p"]
+
+[ext_resource type="Texture2D" uid="uid://ku4gfqcano7t" path="res://assets/person.png" id="1_0dfyj"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hopiu"]
+radius = 4.0
+height = 14.0
+
+[node name="Person" type="CharacterBody2D"]
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+position = Vector2(0, -5)
+shape = SubResource("CapsuleShape2D_hopiu")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(0, -5)
+texture = ExtResource("1_0dfyj")
+
+[node name="Agent" type="Agent" parent="."]
