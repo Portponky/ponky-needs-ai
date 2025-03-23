@@ -11,3 +11,14 @@ export_credentials.cfg
 
 .sconsign.dblite
 src/*.os
+
+# qtcreator stuff
+godot-utility-ai.cflags
+godot-utility-ai.config
+godot-utility-ai.creator
+godot-utility-ai.creator.user
+godot-utility-ai.cxxflags
+godot-utility-ai.files
+godot-utility-ai.includes
+.qtc_clangd/
+
