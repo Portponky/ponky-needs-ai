@@ -136,7 +136,7 @@ void UtilityServer::agent_set_needs(RID agent, const TypedArray<Need>& needs)
     }
 }
 
-godot::TypedArray<Need> UtilityServer::agent_get_needs(RID agent) const
+TypedArray<Need> UtilityServer::agent_get_needs(RID agent) const
 {
     InternalAgent* a = m_agents.get_or_null(agent);
     ERR_FAIL_NULL_V(a, {});

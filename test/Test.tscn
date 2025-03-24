@@ -18,6 +18,8 @@ test = SubResource("Need_njov2")
 [node name="Person" parent="." instance=ExtResource("2_njov2")]
 position = Vector2(249, 95)
 
+[node name="Agent2" type="Agent" parent="Person"]
+
 [node name="Person2" parent="." instance=ExtResource("2_njov2")]
 position = Vector2(329, 173)
 
