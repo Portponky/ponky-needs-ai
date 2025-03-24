@@ -40,6 +40,7 @@ class UtilityServer : public godot::Object
         godot::RBMap<godot::String, float> advert;
         bool active{false};
         float spatial_weight{1.0};
+        godot::ObjectID instance_id;
     };
 
     mutable godot::RID_PtrOwner<InternalAgent> m_agents;
@@ -68,6 +69,17 @@ public:
     // Agent settings
     void agent_set_needs(godot::RID agent, const godot::TypedArray<Need>& needs);
     godot::TypedArray<Need> agent_get_needs(godot::RID agent) const;
+    void agent_set_action_callback(godot::RID agent, godot::Callable callback);
+    void agent_set_no_action_callback(godot::RID agent, godot::Callable callback);
+    void agent_set_consideration(godot::RID agent, float fraction, float weight);
+    float agent_get_need_score(godot::RID agent, godot::String need) const;
+    void agent_set_need_score(godot::RID agent, godot::String need, float score);
+
+    // Action settings
+    void action_set_active(godot::RID action, bool active);
+    void action_set_advert(godot::RID action, const godot::TypedDictionary<godot::String, float>& advert);
+    void action_set_spatial_weight(godot::RID action, float spatial_weight);
+    void action_set_object_id(godot::RID action, uint64_t instance_id);
 
     UtilityServer();
     ~UtilityServer();
