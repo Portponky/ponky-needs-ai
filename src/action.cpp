@@ -6,7 +6,19 @@ using namespace godot;
 
 void Action::_bind_methods()
 {
-    // advert as property
+    ClassDB::bind_method(D_METHOD("set_advert", "advert"), &Action::set_advert);
+    ClassDB::bind_method(D_METHOD("get_advert"), &Action::get_advert);
+
+    ADD_PROPERTY(
+        PropertyInfo(
+            Variant::DICTIONARY,
+            "advert",
+            PROPERTY_HINT_TYPE_STRING,
+            String::num(Variant::STRING) + ":;" + String::num(Variant::FLOAT) + ":"
+        ),
+        "set_advert",
+        "get_advert"
+    );
 
     ClassDB::bind_method(D_METHOD("set_active", "active"), &Action::set_active);
     ClassDB::bind_method(D_METHOD("get_active"), &Action::get_active);
@@ -69,7 +81,7 @@ float Action::get_spatial_weight() const
 Action::Action()
 {
     m_rid = UtilityServer::get_singleton()->create_action();
-    // add object instance id as callback source
+    UtilityServer::get_singleton()->action_set_object_id(m_rid, get_instance_id());
 }
 
 Action::~Action()
