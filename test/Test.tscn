@@ -25,3 +25,5 @@ position = Vector2(329, 173)
 
 [node name="Person3" parent="." instance=ExtResource("2_njov2")]
 position = Vector2(247, 273)
+
+[node name="Action" type="Action" parent="."]

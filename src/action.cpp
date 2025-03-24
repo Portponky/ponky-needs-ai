@@ -19,6 +19,19 @@ void Action::_bind_methods()
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "spatial_weight", PROPERTY_HINT_RANGE, "0.0,2.0,or_greater"), "set_spatial_weight", "get_spatial_weight");
 }
 
+void Action::_notification(int what)
+{
+    switch (what)
+    {
+    case NOTIFICATION_ENTER_TREE:
+        UtilityServer::get_singleton()->action_set_active(m_rid, m_active);
+        break;
+    case NOTIFICATION_EXIT_TREE:
+        UtilityServer::get_singleton()->action_set_active(m_rid, false);
+        break;
+    }
+}
+
 void Action::set_advert(const godot::TypedDictionary<godot::String, float>& advert)
 {
     m_advert = advert;
@@ -33,7 +46,8 @@ godot::TypedDictionary<godot::String, float> Action::get_advert() const
 void Action::set_active(bool active)
 {
     m_active = active;
-    // notification system should handle activity too
+    if (is_inside_tree())
+        UtilityServer::get_singleton()->action_set_active(m_rid, m_active);
 }
 
 bool Action::get_active() const

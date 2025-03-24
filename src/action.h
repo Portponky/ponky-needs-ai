@@ -16,6 +16,7 @@ class Action : public godot::Node2D
 
 protected:
     static void _bind_methods();
+    void _notification(int what);
 
 public:
     void set_advert(const godot::TypedDictionary<godot::String, float>& advert);
