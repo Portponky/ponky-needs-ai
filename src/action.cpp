@@ -41,6 +41,9 @@ void Action::_notification(int what)
     case NOTIFICATION_EXIT_TREE:
         UtilityServer::get_singleton()->action_set_active(m_rid, false);
         break;
+    case NOTIFICATION_TRANSFORM_CHANGED:
+        UtilityServer::get_singleton()->action_set_position(m_rid, get_global_transform().get_origin());
+        break;
     }
 }
 
@@ -80,6 +83,7 @@ float Action::get_spatial_weight() const
 
 Action::Action()
 {
+    set_notify_transform(true);
     m_rid = UtilityServer::get_singleton()->create_action();
     UtilityServer::get_singleton()->action_set_object_id(m_rid, get_instance_id());
 }

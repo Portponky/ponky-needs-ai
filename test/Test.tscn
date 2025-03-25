@@ -1,24 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://0u8x6wmo0j2b"]
+[gd_scene load_steps=4 format=3 uid="uid://0u8x6wmo0j2b"]
 
 [ext_resource type="Script" uid="uid://7yrboufqe7rg" path="res://Test.gd" id="1_myinc"]
 [ext_resource type="PackedScene" uid="uid://dsijjepqyn47p" path="res://Person.tscn" id="2_njov2"]
-
-[sub_resource type="Curve" id="Curve_myinc"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.816667, 0.292135), 0.948034, 0.948034, 0, 0, Vector2(1, 1), 8.89887, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="Need" id="Need_njov2"]
-name = "thirst"
-response = SubResource("Curve_myinc")
+[ext_resource type="Texture2D" uid="uid://btv5hpntckeih" path="res://icon.svg" id="3_2au82"]
 
 [node name="Test" type="Node2D"]
 script = ExtResource("1_myinc")
-test = SubResource("Need_njov2")
 
 [node name="Person" parent="." instance=ExtResource("2_njov2")]
 position = Vector2(249, 95)
-
-[node name="Agent2" type="Agent" parent="Person"]
 
 [node name="Person2" parent="." instance=ExtResource("2_njov2")]
 position = Vector2(329, 173)
@@ -26,4 +16,13 @@ position = Vector2(329, 173)
 [node name="Person3" parent="." instance=ExtResource("2_njov2")]
 position = Vector2(247, 273)
 
-[node name="Action" type="Action" parent="."]
+[node name="Obj" type="Sprite2D" parent="."]
+position = Vector2(167, 150)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_2au82")
+
+[node name="Action" type="Action" parent="Obj"]
+advert = Dictionary[String, float]({
+"happy": 0.2
+})
+scale = Vector2(10, 10)

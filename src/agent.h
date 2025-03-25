@@ -27,6 +27,11 @@ public:
     void set_consideration_weight(float weight);
     float get_consideration_weight() const;
 
+    void choose_action(float near_distance, float far_distance);
+
+    void callback_action(uint64_t instance_id);
+    void callback_no_action();
+
     Agent();
     ~Agent();
 };

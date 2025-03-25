@@ -1,12 +1,22 @@
-[gd_scene load_steps=3 format=3 uid="uid://dsijjepqyn47p"]
+[gd_scene load_steps=6 format=3 uid="uid://dsijjepqyn47p"]
 
 [ext_resource type="Texture2D" uid="uid://ku4gfqcano7t" path="res://assets/person.png" id="1_0dfyj"]
+[ext_resource type="Script" uid="uid://d244hl4amvl83" path="res://Person.gd" id="1_hopiu"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hopiu"]
 radius = 4.0
 height = 14.0
 
+[sub_resource type="Curve" id="Curve_0dfyj"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Need" id="Need_hopiu"]
+name = "happy"
+response = SubResource("Curve_0dfyj")
+
 [node name="Person" type="CharacterBody2D"]
+script = ExtResource("1_hopiu")
 
 [node name="Shape" type="CollisionShape2D" parent="."]
 position = Vector2(0, -5)
@@ -17,3 +27,7 @@ position = Vector2(0, -5)
 texture = ExtResource("1_0dfyj")
 
 [node name="Agent" type="Agent" parent="."]
+needs = Array[Need]([SubResource("Need_hopiu")])
+
+[connection signal="action_chosen" from="Agent" to="." method="_on_agent_action_chosen"]
+[connection signal="no_action_chosen" from="Agent" to="." method="_on_agent_no_action_chosen"]

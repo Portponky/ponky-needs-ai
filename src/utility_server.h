@@ -17,10 +17,6 @@ class UtilityServer : public godot::Object
 {
     GDCLASS(UtilityServer, godot::Object);
 
-    mutable bool m_exit_thread{false};
-    godot::Thread* m_thread{nullptr};
-    godot::Mutex* m_mutex{nullptr};
-
     struct InternalAgent
     {
         godot::Vector<godot::Ref<Need>> needs;
@@ -40,20 +36,38 @@ class UtilityServer : public godot::Object
         godot::RBMap<godot::String, float> advert;
         bool active{false};
         float spatial_weight{1.0};
+        godot::Vector2 position;
         godot::ObjectID instance_id;
     };
+
+    struct ThinkRequest
+    {
+        godot::RID agent;
+        godot::Vector2 position;
+        float near_range;
+        float far_range;
+    };
+
+    mutable bool m_exit_thread{false};
+    godot::Thread* m_thread{nullptr};
 
     mutable godot::RID_PtrOwner<InternalAgent> m_agents;
     mutable godot::RID_PtrOwner<InternalAction> m_actions;
 
+    godot::Mutex* m_input_mutex{nullptr};
+    godot::Vector<ThinkRequest> m_requests;
+    godot::Vector<godot::RID> m_free_queue;
 
     static UtilityServer* s_singleton;
     void thread_func();
+    void purge_free_queue();
+    void think(const ThinkRequest& t);
 
     InternalAgent* get_agent_with_decays(godot::RID agent);
 
 protected:
     static void _bind_methods();
+    void _process(real_t delta);
 
 public:
     static UtilityServer* get_singleton();
@@ -79,7 +93,13 @@ public:
     void action_set_active(godot::RID action, bool active);
     void action_set_advert(godot::RID action, const godot::TypedDictionary<godot::String, float>& advert);
     void action_set_spatial_weight(godot::RID action, float spatial_weight);
+    void action_set_position(godot::RID action, const godot::Vector2& position);
     void action_set_object_id(godot::RID action, uint64_t instance_id);
+
+    // Use
+    void agent_choose_action(godot::RID agent, godot::Vector2 position, float near_distance, float far_distance);
+
+
 
     UtilityServer();
     ~UtilityServer();

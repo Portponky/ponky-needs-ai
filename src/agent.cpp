@@ -1,6 +1,7 @@
 #include "agent.h"
 
 #include "utility_server.h"
+#include "action.h"
 
 using namespace godot;
 
@@ -29,6 +30,11 @@ void Agent::_bind_methods()
     ClassDB::bind_method(D_METHOD("get_consideration_weight"), &Agent::get_consideration_weight);
 
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "consideration_weight", PROPERTY_HINT_RANGE, "0.0,1.0"), "set_consideration_weight", "get_consideration_weight");
+
+    ClassDB::bind_method(D_METHOD("choose_action", "near_distance", "far_distance"), &Agent::choose_action);
+
+    ADD_SIGNAL(MethodInfo("action_chosen", PropertyInfo(Variant::OBJECT, "action", PROPERTY_HINT_RESOURCE_TYPE, "Action")));
+    ADD_SIGNAL(MethodInfo("no_action_chosen"));
 }
 
 void Agent::set_needs(const TypedArray<Need>& needs)
@@ -64,10 +70,42 @@ float Agent::get_consideration_weight() const
     return m_consideration_weight;
 }
 
+void Agent::choose_action(float near_distance, float far_distance)
+{
+    ERR_FAIL_COND(near_distance < 0.0f);
+    ERR_FAIL_COND(far_distance <= near_distance);
+
+    UtilityServer::get_singleton()->agent_choose_action(m_rid, get_global_position(), near_distance, far_distance);
+}
+
+void Agent::callback_action(uint64_t instance_id)
+{
+    Object* object = UtilityFunctions::instance_from_id(instance_id);
+    if (object)
+    {
+        Action* action = Object::cast_to<Action>(object);
+        if (action)
+        {
+            emit_signal("action_chosen", action);
+            return;
+        }
+        WARN_PRINT("Action provided object id of non-action");
+    }
+
+    WARN_PRINT("Failed to find selected action");
+    callback_no_action();
+}
+
+void Agent::callback_no_action()
+{
+    emit_signal("no_action_chosen");
+}
+
 Agent::Agent()
 {
     m_rid = UtilityServer::get_singleton()->create_agent();
-    // Add action and no-action callbacks
+    UtilityServer::get_singleton()->agent_set_action_callback(m_rid, callable_mp(this, &Agent::callback_action));
+    UtilityServer::get_singleton()->agent_set_no_action_callback(m_rid, callable_mp(this, &Agent::callback_no_action));
 }
 
 Agent::~Agent()

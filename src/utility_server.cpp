@@ -1,6 +1,7 @@
 #include "utility_server.h"
 
 #include <godot_cpp/classes/os.hpp>
+#include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/variant/callable.hpp>
 
 using namespace godot;
@@ -9,12 +10,148 @@ UtilityServer* UtilityServer::s_singleton{nullptr};
 
 void UtilityServer::thread_func()
 {
-    uint64_t msdelay = 1000;
+    uint64_t msdelay = 50;
 
     while (!m_exit_thread)
     {
-        OS::get_singleton()->delay_usec(msdelay * 1000);
+        purge_free_queue();
+
+        bool pending_think{false};
+        ThinkRequest next;
+
+        m_input_mutex->lock();
+        if (m_requests.size() > 0)
+        {
+            next = m_requests.get(0);
+            m_requests.remove_at(0);
+            pending_think = true;
+        }
+        m_input_mutex->unlock();
+
+        if (!pending_think)
+        {
+            OS::get_singleton()->delay_usec(msdelay * 1000);
+            continue;
+        }
+
+        think(next);
     }
+}
+
+void UtilityServer::purge_free_queue()
+{
+    m_input_mutex->lock();
+    auto free_queue = m_free_queue;
+    m_free_queue.clear();
+    m_input_mutex->unlock();
+
+    for (RID rid : free_queue)
+    {
+        if (m_agents.owns(rid))
+        {
+            InternalAgent* agent = m_agents.get_or_null(rid);
+            m_agents.free(rid);
+            memdelete(agent);
+        }
+        else if (m_actions.owns(rid))
+        {
+            InternalAction* action = m_actions.get_or_null(rid);
+            m_actions.free(rid);
+            memdelete(action);
+        }
+    }
+}
+
+void UtilityServer::think(const ThinkRequest& t)
+{
+    InternalAgent* ag = get_agent_with_decays(t.agent);
+    if (!ag)
+        return; // already deleted
+
+    Vector<ObjectID> choices;
+    Vector<float> scores;
+    float best{0.0f};
+    float worst{0.0f};
+
+    List<RID> list;
+    m_actions.get_owned_list(&list);
+    for (RID rid : list)
+    {
+        InternalAction* ac = m_actions.get_or_null(rid);
+        if (!ac)
+            continue; // already deleted
+
+        // filters
+
+        // scale for distance
+        float dist_scale{1.0f};
+        if (ac->spatial_weight > 0.0f)
+        {
+            float dist = t.position.distance_to(ac->position);
+            dist_scale = UtilityFunctions::minf(1.0f, UtilityFunctions::inverse_lerp(t.far_range, t.near_range, dist / ac->spatial_weight));
+        }
+
+        if (dist_scale <= 0.0f)
+            continue;
+
+        float score{0.0f};
+        for (const auto& it : ac->advert)
+        {
+            decltype(ag->indices)::Element* e = ag->indices.find(it.key);
+            if (!e)
+                continue;
+            Ref<Need> need = ag->needs[e->value()];
+            score += need->get_attenuation_weight() *
+                    (need->get_response()->sample(ag->values[e->value()] + it.value) - need->get_response()->sample(ag->values[e->value()]));
+        }
+        score *= dist_scale;
+
+        if (score > worst)
+        {
+            choices.append(ac->instance_id);
+            scores.push_back(score);
+
+            if (score > best)
+            {
+                best = score;
+                worst = ag->consideration_fraction * best;
+            }
+        }
+    }
+
+    Vector<float> weights;
+    float total_weight{0.0f};
+    for (int n = 0; n < choices.size(); ++n)
+    {
+        if (scores[n] <= worst)
+            weights.append(0.0f);
+        else
+        {
+            float weight = UtilityFunctions::remap(scores[n], worst, best, ag->consideration_weight, 1.0);
+            total_weight += weight;
+            weights.push_back(weight);
+        }
+    }
+
+    if (choices.is_empty() || total_weight == 0.0f)
+    {
+        ag->no_action_callback.call_deferred();
+        return;
+    }
+
+    total_weight *= UtilityFunctions::randf();
+    ObjectID chosen = choices[choices.size() - 1]; // default last choice
+    for (int n = 0; n < choices.size() - 1; ++n)
+    {
+        total_weight -= weights[n];
+        if (total_weight <= 0.0f)
+        {
+            chosen = choices[n];
+            break;
+        }
+    }
+
+    ag->action_callback.call_deferred(chosen);
 }
 
 UtilityServer::InternalAgent* UtilityServer::get_agent_with_decays(RID agent)
@@ -43,6 +180,11 @@ void UtilityServer::_bind_methods()
     ClassDB::bind_method(D_METHOD("action_set_object_id", "rid", "instance_id"), &UtilityServer::action_set_object_id);
 }
 
+void UtilityServer::_process(real_t delta)
+{
+    UtilityFunctions::print("I'm processin' here!");
+}
+
 UtilityServer* UtilityServer::get_singleton()
 {
     return s_singleton;
@@ -51,7 +193,7 @@ UtilityServer* UtilityServer::get_singleton()
 Error UtilityServer::init()
 {
     m_exit_thread = false;
-    m_mutex = memnew(Mutex);
+    m_input_mutex = memnew(Mutex);
     m_thread = memnew(Thread);
     m_thread->reference(); // Fudge: The thread seems to get unreffed an extra time whilst starting
     m_thread->start(callable_mp(this, &UtilityServer::thread_func));
@@ -68,9 +210,10 @@ void UtilityServer::finish()
 
     memdelete(m_thread);
 
-    if (m_mutex)
-        memdelete(m_mutex);
+    if (m_input_mutex)
+        memdelete(m_input_mutex);
 
+    m_input_mutex = nullptr;
     m_thread = nullptr;
 }
 
@@ -90,17 +233,11 @@ RID UtilityServer::create_action()
 
 void UtilityServer::free_rid(RID rid)
 {
-    if (m_agents.owns(rid))
+    if (m_agents.owns(rid) || m_actions.owns(rid))
     {
-        InternalAgent* agent = m_agents.get_or_null(rid);
-        m_agents.free(rid);
-        memdelete(agent);
-    }
-    else if (m_actions.owns(rid))
-    {
-        InternalAction* action = m_actions.get_or_null(rid);
-        m_actions.free(rid);
-        memdelete(action);
+        m_input_mutex->lock();
+        m_free_queue.append(rid);
+        m_input_mutex->unlock();
     }
     else
         ERR_FAIL_MSG("Invalid ID.");
@@ -223,12 +360,27 @@ void UtilityServer::action_set_spatial_weight(RID action, float spatial_weight)
     a->spatial_weight = spatial_weight;
 }
 
+void UtilityServer::action_set_position(godot::RID action, const godot::Vector2& position)
+{
+    InternalAction* a = m_actions.get_or_null(action);
+    ERR_FAIL_NULL(a);
+
+    a->position = position;
+}
+
 void UtilityServer::action_set_object_id(RID action, uint64_t instance_id)
 {
     InternalAction* a = m_actions.get_or_null(action);
     ERR_FAIL_NULL(a);
 
     a->instance_id = instance_id;
+}
+
+void UtilityServer::agent_choose_action(godot::RID agent, godot::Vector2 position, float near_distance, float far_distance)
+{
+    m_input_mutex->lock();
+    m_requests.append({agent, position, near_distance, far_distance});
+    m_input_mutex->unlock();
 }
 
 UtilityServer::UtilityServer()
