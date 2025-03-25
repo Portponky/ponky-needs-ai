@@ -1,6 +1,7 @@
 #pragma once
 
 #include <godot_cpp/classes/node2d.hpp>
+#include <godot_cpp/variant/typed_dictionary.hpp>
 
 #include "need.h"
 
@@ -27,7 +28,11 @@ public:
     void set_consideration_weight(float weight);
     float get_consideration_weight() const;
 
+    float get_need_value(const godot::String& name) const;
+    void set_need_value(const godot::String& name, float value);
+
     void choose_action(float near_distance, float far_distance);
+    void grant(const godot::TypedDictionary<godot::String, float>& reward);
 
     void callback_action(uint64_t instance_id);
     void callback_no_action();

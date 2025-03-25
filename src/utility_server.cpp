@@ -178,6 +178,9 @@ void UtilityServer::_bind_methods()
     ClassDB::bind_method(D_METHOD("action_set_advert", "rid", "advert"), &UtilityServer::action_set_advert);
     ClassDB::bind_method(D_METHOD("action_set_spatial_weight", "rid", "spatial_weight"), &UtilityServer::action_set_spatial_weight);
     ClassDB::bind_method(D_METHOD("action_set_object_id", "rid", "instance_id"), &UtilityServer::action_set_object_id);
+
+    ClassDB::bind_method(D_METHOD("agent_choose_action", "rid", "position", "near_distance", "far_distance"), &UtilityServer::agent_choose_action);
+    ClassDB::bind_method(D_METHOD("agent_grant", "rid", "reward"), &UtilityServer::action_set_object_id);
 }
 
 void UtilityServer::_process(real_t delta)
@@ -309,9 +312,9 @@ void UtilityServer::agent_set_consideration(RID agent, float fraction, float wei
     a->consideration_weight = weight;
 }
 
-float UtilityServer::agent_get_need_score(RID agent, String need) const
+float UtilityServer::agent_get_need_score(RID agent, const String& need)
 {
-    InternalAgent* a = m_agents.get_or_null(agent);
+    InternalAgent* a = get_agent_with_decays(agent);
     ERR_FAIL_NULL_V(a, 0.0f);
 
     decltype(a->indices)::Element* v = a->indices.find(need);
@@ -319,7 +322,7 @@ float UtilityServer::agent_get_need_score(RID agent, String need) const
     return a->values[v->value()];
 }
 
-void UtilityServer::agent_set_need_score(RID agent, String need, float score)
+void UtilityServer::agent_set_need_score(RID agent, const String& need, float score)
 {
     InternalAgent* a = m_agents.get_or_null(agent);
     ERR_FAIL_NULL(a);
@@ -381,6 +384,24 @@ void UtilityServer::agent_choose_action(godot::RID agent, godot::Vector2 positio
     m_input_mutex->lock();
     m_requests.append({agent, position, near_distance, far_distance});
     m_input_mutex->unlock();
+}
+
+void UtilityServer::agent_grant(godot::RID agent, const godot::TypedDictionary<godot::String, float>& reward)
+{
+    InternalAgent* a = get_agent_with_decays(agent);
+    ERR_FAIL_NULL(a);
+
+    Array keys = reward.keys();
+    for (int n = 0; n < keys.size(); ++n)
+    {
+        String key = keys[n];
+        decltype(a->indices)::Element* e = a->indices.find(key);
+        if (e)
+        {
+            float diff = reward[key];
+            a->values.write[e->value()] += diff;
+        }
+    }
 }
 
 UtilityServer::UtilityServer()

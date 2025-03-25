@@ -86,8 +86,8 @@ public:
     void agent_set_action_callback(godot::RID agent, godot::Callable callback);
     void agent_set_no_action_callback(godot::RID agent, godot::Callable callback);
     void agent_set_consideration(godot::RID agent, float fraction, float weight);
-    float agent_get_need_score(godot::RID agent, godot::String need) const;
-    void agent_set_need_score(godot::RID agent, godot::String need, float score);
+    float agent_get_need_score(godot::RID agent, const godot::String& need);
+    void agent_set_need_score(godot::RID agent, const godot::String& need, float score);
 
     // Action settings
     void action_set_active(godot::RID action, bool active);
@@ -98,8 +98,7 @@ public:
 
     // Use
     void agent_choose_action(godot::RID agent, godot::Vector2 position, float near_distance, float far_distance);
-
-
+    void agent_grant(godot::RID agent, const godot::TypedDictionary<godot::String, float>& reward);
 
     UtilityServer();
     ~UtilityServer();
