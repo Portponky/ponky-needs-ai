@@ -14,6 +14,7 @@ point_count = 2
 [sub_resource type="Need" id="Need_hopiu"]
 name = "happy"
 response = SubResource("Curve_0dfyj")
+decay_time = 20.0
 
 [node name="Person" type="CharacterBody2D"]
 script = ExtResource("1_hopiu")

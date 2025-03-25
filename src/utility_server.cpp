@@ -1,5 +1,6 @@
 #include "utility_server.h"
 
+#include <godot_cpp/classes/time.hpp>
 #include <godot_cpp/classes/os.hpp>
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/variant/callable.hpp>
@@ -156,8 +157,27 @@ void UtilityServer::think(const ThinkRequest& t)
 
 UtilityServer::InternalAgent* UtilityServer::get_agent_with_decays(RID agent)
 {
-    // **************** NOT DONE *******************
-    return m_agents.get_or_null(agent);
+    InternalAgent* a = m_agents.get_or_null(agent);
+
+    if (a && a->decaying)
+    {
+        const uint64_t ticks = Time::get_singleton()->get_ticks_msec();
+        const uint64_t diff = ticks - a->last_decay_tick;
+        constexpr uint64_t MINIMUM_DECAY_THRESHOLD = 100;
+        if (diff < MINIMUM_DECAY_THRESHOLD)
+            return a;
+        const float decay_seconds = 0.001f * diff;
+        for (int n = 0; n < a->needs.size(); ++n)
+        {
+            if (a->needs[n]->get_decay_time() == 0.0)
+                continue;
+
+            a->values.write[n] = UtilityFunctions::clampf(a->values[n] - decay_seconds / a->needs[n]->get_decay_time(), 0.0f, 1.0f);
+        }
+        a->last_decay_tick = ticks;
+    }
+
+    return a;
 }
 
 void UtilityServer::_bind_methods()
@@ -171,6 +191,7 @@ void UtilityServer::_bind_methods()
     ClassDB::bind_method(D_METHOD("agent_set_action_callback", "rid", "callback"), &UtilityServer::agent_set_action_callback);
     ClassDB::bind_method(D_METHOD("agent_set_no_action_callback", "rid", "callback"), &UtilityServer::agent_set_no_action_callback);
     ClassDB::bind_method(D_METHOD("agent_set_consideration", "rid", "fraction", "weight"), &UtilityServer::agent_set_consideration);
+    ClassDB::bind_method(D_METHOD("agent_set_decaying", "rid", "decaying"), &UtilityServer::agent_set_decaying);
     ClassDB::bind_method(D_METHOD("agent_get_need_score", "rid", "need"), &UtilityServer::agent_get_need_score);
     ClassDB::bind_method(D_METHOD("agent_set_need_score", "rid", "need", "value"), &UtilityServer::agent_set_need_score);
 
@@ -181,11 +202,6 @@ void UtilityServer::_bind_methods()
 
     ClassDB::bind_method(D_METHOD("agent_choose_action", "rid", "position", "near_distance", "far_distance"), &UtilityServer::agent_choose_action);
     ClassDB::bind_method(D_METHOD("agent_grant", "rid", "reward"), &UtilityServer::action_set_object_id);
-}
-
-void UtilityServer::_process(real_t delta)
-{
-    UtilityFunctions::print("I'm processin' here!");
 }
 
 UtilityServer* UtilityServer::get_singleton()
@@ -312,6 +328,15 @@ void UtilityServer::agent_set_consideration(RID agent, float fraction, float wei
     a->consideration_weight = weight;
 }
 
+void UtilityServer::agent_set_decaying(godot::RID agent, bool decaying)
+{
+    InternalAgent* a = get_agent_with_decays(agent);
+    ERR_FAIL_NULL(a);
+
+    a->decaying = decaying;
+    a->last_decay_tick = Time::get_singleton()->get_ticks_msec();
+}
+
 float UtilityServer::agent_get_need_score(RID agent, const String& need)
 {
     InternalAgent* a = get_agent_with_decays(agent);
@@ -399,7 +424,7 @@ void UtilityServer::agent_grant(godot::RID agent, const godot::TypedDictionary<g
         if (e)
         {
             float diff = reward[key];
-            a->values.write[e->value()] += diff;
+            a->values.write[e->value()] = UtilityFunctions::clampf(a->values[e->value()] + diff, 0.0f, 1.0f);
         }
     }
 }

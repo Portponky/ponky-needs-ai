@@ -14,9 +14,11 @@ class Agent : public godot::Node2D
     godot::TypedArray<Need> m_needs;
     float m_consideration_fraction{0.9};
     float m_consideration_weight{0.5};
+    bool m_decaying{true};
 
 protected:
     static void _bind_methods();
+    void _notification(int what);
 
 public:
     void set_needs(const godot::TypedArray<Need>& needs);
@@ -27,6 +29,9 @@ public:
 
     void set_consideration_weight(float weight);
     float get_consideration_weight() const;
+
+    void set_decaying(bool decaying);
+    bool get_decaying() const;
 
     float get_need_value(const godot::String& name) const;
     void set_need_value(const godot::String& name, float value);

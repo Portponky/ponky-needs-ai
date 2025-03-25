@@ -29,6 +29,7 @@ class UtilityServer : public godot::Object
         float consideration_fraction{0.9};
         float consideration_weight{0.0};
         uint64_t last_decay_tick{0};
+        bool decaying{false};
     };
 
     struct InternalAction
@@ -67,7 +68,6 @@ class UtilityServer : public godot::Object
 
 protected:
     static void _bind_methods();
-    void _process(real_t delta);
 
 public:
     static UtilityServer* get_singleton();
@@ -86,6 +86,7 @@ public:
     void agent_set_action_callback(godot::RID agent, godot::Callable callback);
     void agent_set_no_action_callback(godot::RID agent, godot::Callable callback);
     void agent_set_consideration(godot::RID agent, float fraction, float weight);
+    void agent_set_decaying(godot::RID agent, bool decaying);
     float agent_get_need_score(godot::RID agent, const godot::String& need);
     void agent_set_need_score(godot::RID agent, const godot::String& need, float score);
 

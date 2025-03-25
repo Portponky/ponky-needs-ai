@@ -31,6 +31,11 @@ void Agent::_bind_methods()
 
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "consideration_weight", PROPERTY_HINT_RANGE, "0.0,1.0"), "set_consideration_weight", "get_consideration_weight");
 
+    ClassDB::bind_method(D_METHOD("set_decaying", "decaying"), &Agent::set_decaying);
+    ClassDB::bind_method(D_METHOD("get_decaying"), &Agent::get_decaying);
+
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "decaying"), "set_decaying", "get_decaying");
+
     ClassDB::bind_method(D_METHOD("get_need_value", "name"), &Agent::get_need_value);
     ClassDB::bind_method(D_METHOD("set_need_value", "name", "value"), &Agent::set_need_value);
     ClassDB::bind_method(D_METHOD("choose_action", "near_distance", "far_distance"), &Agent::choose_action);
@@ -38,6 +43,19 @@ void Agent::_bind_methods()
 
     ADD_SIGNAL(MethodInfo("action_chosen", PropertyInfo(Variant::OBJECT, "action", PROPERTY_HINT_RESOURCE_TYPE, "Action")));
     ADD_SIGNAL(MethodInfo("no_action_chosen"));
+}
+
+void Agent::_notification(int what)
+{
+    switch (what)
+    {
+    case NOTIFICATION_ENTER_TREE:
+        UtilityServer::get_singleton()->agent_set_decaying(m_rid, m_decaying);
+        break;
+    case NOTIFICATION_EXIT_TREE:
+        UtilityServer::get_singleton()->agent_set_decaying(m_rid, false);
+        break;
+    }
 }
 
 void Agent::set_needs(const TypedArray<Need>& needs)
@@ -71,6 +89,18 @@ void Agent::set_consideration_weight(float weight)
 float Agent::get_consideration_weight() const
 {
     return m_consideration_weight;
+}
+
+void Agent::set_decaying(bool decaying)
+{
+    m_decaying = decaying;
+    if (is_inside_tree())
+        UtilityServer::get_singleton()->agent_set_decaying(m_rid, m_decaying);
+}
+
+bool Agent::get_decaying() const
+{
+    return m_decaying;
 }
 
 void Agent::choose_action(float near_distance, float far_distance)
