@@ -1,34 +1,80 @@
-[gd_scene load_steps=6 format=3 uid="uid://dsijjepqyn47p"]
+[gd_scene load_steps=14 format=3 uid="uid://dsijjepqyn47p"]
 
 [ext_resource type="Texture2D" uid="uid://ku4gfqcano7t" path="res://assets/person.png" id="1_0dfyj"]
 [ext_resource type="Script" uid="uid://d244hl4amvl83" path="res://Person.gd" id="1_hopiu"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hopiu"]
-radius = 4.0
-height = 14.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_hopiu"]
+radius = 3.0
 
 [sub_resource type="Curve" id="Curve_0dfyj"]
+_data = [Vector2(0, 0), 0.0, 0.238421, 0, 0, Vector2(0.316092, 0.224719), 0.977528, 0.977528, 0, 0, Vector2(0.517241, 0.719101), 1.15298, 1.15298, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Need" id="Need_hopiu"]
+name = "hunger"
+response = SubResource("Curve_0dfyj")
+decay_time = 240.0
+initial_value = 0.9
+
+[sub_resource type="Curve" id="Curve_hopiu"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.396552, 0.101124), 0.510015, 0.510015, 0, 0, Vector2(0.764368, 0.460674), 2.6882, 2.6882, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Need" id="Need_btgww"]
+name = "thirst"
+response = SubResource("Curve_hopiu")
+decay_time = 150.0
+initial_value = 0.7
+
+[sub_resource type="Curve" id="Curve_7h36p"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Need" id="Need_hopiu"]
-name = "happy"
-response = SubResource("Curve_0dfyj")
-decay_time = 20.0
+[sub_resource type="Need" id="Need_18vio"]
+name = "work"
+response = SubResource("Curve_7h36p")
+decay_time = 90.0
+initial_value = 0.2
+
+[sub_resource type="Curve" id="Curve_4umtp"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.431034, 0.247191), 0.906001, 0.906001, 0, 0, Vector2(1, 1), 0.668835, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Need" id="Need_l3e8t"]
+name = "social"
+response = SubResource("Curve_4umtp")
+decay_time = 80.0
+initial_value = 0.7
+
+[sub_resource type="Curve" id="Curve_i2861"]
+_data = [Vector2(0, 0), 0.0, 0.501296, 0, 0, Vector2(0.293103, 0.292135), 1.14442, 1.14442, 0, 0, Vector2(0.591954, 0.808989), 0.977528, 0.977528, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Need" id="Need_w1m2r"]
+name = "clean"
+response = SubResource("Curve_i2861")
+decay_time = 160.0
+initial_value = 0.9
 
 [node name="Person" type="CharacterBody2D"]
+collision_layer = 0
+motion_mode = 1
 script = ExtResource("1_hopiu")
 
 [node name="Shape" type="CollisionShape2D" parent="."]
-position = Vector2(0, -5)
-shape = SubResource("CapsuleShape2D_hopiu")
+shape = SubResource("CircleShape2D_hopiu")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 position = Vector2(0, -5)
 texture = ExtResource("1_0dfyj")
 
+[node name="NavAgent" type="NavigationAgent2D" parent="."]
+unique_name_in_owner = true
+path_desired_distance = 10.0
+path_max_distance = 30.0
+
 [node name="Agent" type="Agent" parent="."]
-needs = Array[Need]([SubResource("Need_hopiu")])
+needs = Array[Need]([SubResource("Need_hopiu"), SubResource("Need_btgww"), SubResource("Need_18vio"), SubResource("Need_l3e8t"), SubResource("Need_w1m2r")])
 
 [connection signal="action_chosen" from="Agent" to="." method="_on_agent_action_chosen"]
 [connection signal="no_action_chosen" from="Agent" to="." method="_on_agent_no_action_chosen"]
