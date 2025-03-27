@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://cmk5kwh1w4o46"]
+
+[ext_resource type="Texture2D" uid="uid://dhrq8sc8idxx7" path="res://assets/cooler.png" id="1_p04hn"]
+[ext_resource type="Script" uid="uid://1wpa5teu7oof" path="res://objects/Cooler-Drink.gd" id="2_qidj2"]
+
+[node name="Cooler" type="Node2D"]
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(0, -3)
+texture = ExtResource("1_p04hn")
+
+[node name="Drink" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"clean": -0.02,
+"thirst": 0.27
+})
+script = ExtResource("2_qidj2")

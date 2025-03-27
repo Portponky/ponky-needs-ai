@@ -75,6 +75,7 @@ path_max_distance = 30.0
 
 [node name="Agent" type="Agent" parent="."]
 needs = Array[Need]([SubResource("Need_hopiu"), SubResource("Need_btgww"), SubResource("Need_18vio"), SubResource("Need_l3e8t"), SubResource("Need_w1m2r")])
+unique_name_in_owner = true
 
 [connection signal="action_chosen" from="Agent" to="." method="_on_agent_action_chosen"]
 [connection signal="no_action_chosen" from="Agent" to="." method="_on_agent_no_action_chosen"]

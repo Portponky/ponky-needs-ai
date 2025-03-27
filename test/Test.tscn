@@ -1,8 +1,10 @@
-[gd_scene load_steps=7 format=4 uid="uid://0u8x6wmo0j2b"]
+[gd_scene load_steps=9 format=4 uid="uid://0u8x6wmo0j2b"]
 
 [ext_resource type="Script" uid="uid://7yrboufqe7rg" path="res://Test.gd" id="1_myinc"]
 [ext_resource type="Texture2D" uid="uid://tj0hwbsw4vsq" path="res://assets/tiles.png" id="2_8tn2x"]
 [ext_resource type="PackedScene" uid="uid://dsijjepqyn47p" path="res://Person.tscn" id="2_njov2"]
+[ext_resource type="PackedScene" uid="uid://cmk5kwh1w4o46" path="res://objects/Cooler.tscn" id="4_8tn2x"]
+[ext_resource type="PackedScene" uid="uid://h0l73w1oqvd2" path="res://objects/Desk.tscn" id="5_aq4fw"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_aq4fw"]
 texture = ExtResource("2_8tn2x")
@@ -36,62 +38,118 @@ tile_set = SubResource("TileSet_ivycn")
 [node name="NavRegion" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_q1uvj")
 
-[node name="Person" parent="." instance=ExtResource("2_njov2")]
+[node name="Things" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Person" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(249, 95)
+full_name = "john"
 
-[node name="Person2" parent="." instance=ExtResource("2_njov2")]
+[node name="Person2" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(329, 173)
+full_name = "paul"
 
-[node name="Person3" parent="." instance=ExtResource("2_njov2")]
+[node name="Person3" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(247, 273)
+full_name = "george"
 
-[node name="Person4" parent="." instance=ExtResource("2_njov2")]
+[node name="Person4" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(96, 152)
+full_name = "ringo"
 
-[node name="Person5" parent="." instance=ExtResource("2_njov2")]
+[node name="Person5" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(145, 185)
+full_name = "mob"
 
-[node name="Person6" parent="." instance=ExtResource("2_njov2")]
+[node name="Person6" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(455, 249)
+full_name = "reigan"
 
-[node name="Person7" parent="." instance=ExtResource("2_njov2")]
+[node name="Person7" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(321, 270)
+full_name = "joseph"
 
-[node name="Person8" parent="." instance=ExtResource("2_njov2")]
+[node name="Person8" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(117, 314)
+full_name = "jotaro"
 
-[node name="Person9" parent="." instance=ExtResource("2_njov2")]
+[node name="Person9" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(128, 396)
+full_name = "kakyoin"
 
-[node name="Person10" parent="." instance=ExtResource("2_njov2")]
+[node name="Person10" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(311, 343)
+full_name = "avdol"
 
-[node name="Person11" parent="." instance=ExtResource("2_njov2")]
+[node name="Person11" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(431, 358)
+full_name = "polnareff"
 
-[node name="Person12" parent="." instance=ExtResource("2_njov2")]
+[node name="Person12" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(286, 280)
+full_name = "iggy"
 
-[node name="Person13" parent="." instance=ExtResource("2_njov2")]
+[node name="Person13" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(507, 214)
+full_name = "josuke"
 
-[node name="Person14" parent="." instance=ExtResource("2_njov2")]
+[node name="Person14" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(532, 286)
+full_name = "okayasu"
 
-[node name="Person15" parent="." instance=ExtResource("2_njov2")]
+[node name="Person15" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(532, 388)
+full_name = "keichi"
 
-[node name="Person16" parent="." instance=ExtResource("2_njov2")]
+[node name="Person16" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(279, 188)
+full_name = "hayato"
 
-[node name="Person17" parent="." instance=ExtResource("2_njov2")]
+[node name="Person17" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(278, 122)
+full_name = "giorno"
 
-[node name="Person18" parent="." instance=ExtResource("2_njov2")]
+[node name="Person18" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(315, 88)
+full_name = "bucciarati"
 
-[node name="Person19" parent="." instance=ExtResource("2_njov2")]
+[node name="Person19" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(148, 133)
+full_name = "narancia"
 
-[node name="Person20" parent="." instance=ExtResource("2_njov2")]
+[node name="Person20" parent="Things" instance=ExtResource("2_njov2")]
 position = Vector2(225, 146)
+full_name = "abbracio"
+
+[node name="Cooler" parent="Things" instance=ExtResource("4_8tn2x")]
+position = Vector2(178, 183)
+
+[node name="Cooler2" parent="Things" instance=ExtResource("4_8tn2x")]
+position = Vector2(371, 154)
+
+[node name="Cooler3" parent="Things" instance=ExtResource("4_8tn2x")]
+position = Vector2(422, 274)
+
+[node name="Desk" parent="Things" instance=ExtResource("5_aq4fw")]
+position = Vector2(86, 120)
+
+[node name="Desk2" parent="Things" instance=ExtResource("5_aq4fw")]
+position = Vector2(105, 119)
+
+[node name="Desk3" parent="Things" instance=ExtResource("5_aq4fw")]
+position = Vector2(128, 121)
+
+[node name="Desk4" parent="Things" instance=ExtResource("5_aq4fw")]
+position = Vector2(117, 139)
+
+[node name="Desk5" parent="Things" instance=ExtResource("5_aq4fw")]
+position = Vector2(94, 138)
+
+[node name="Desk6" parent="Things" instance=ExtResource("5_aq4fw")]
+position = Vector2(121, 155)
+
+[node name="Desk7" parent="Things" instance=ExtResource("5_aq4fw")]
+position = Vector2(97, 169)
+
+[node name="Desk8" parent="Things" instance=ExtResource("5_aq4fw")]
+position = Vector2(121, 175)
