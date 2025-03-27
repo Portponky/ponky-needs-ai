@@ -29,6 +29,11 @@ void Action::_bind_methods()
     ClassDB::bind_method(D_METHOD("get_spatial_weight"), &Action::get_spatial_weight);
 
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "spatial_weight", PROPERTY_HINT_RANGE, "0.0,2.0,or_greater"), "set_spatial_weight", "get_spatial_weight");
+
+    ClassDB::bind_method(D_METHOD("set_tags", "tags"), &Action::set_tags);
+    ClassDB::bind_method(D_METHOD("get_tags"), &Action::get_tags);
+
+    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "tags", PROPERTY_HINT_TYPE_STRING, String::num(Variant::STRING) + ":"), "set_tags", "get_tags");
 }
 
 void Action::_notification(int what)
@@ -79,6 +84,16 @@ void Action::set_spatial_weight(float weight)
 float Action::get_spatial_weight() const
 {
     return m_spatial_weight;
+}
+
+void Action::set_tags(const godot::TypedArray<godot::String>& tags)
+{
+    m_tags = tags;
+}
+
+godot::TypedArray<godot::String> Action::get_tags() const
+{
+    return m_tags;
 }
 
 Action::Action()

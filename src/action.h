@@ -13,6 +13,7 @@ class Action : public godot::Node2D
     godot::TypedDictionary<godot::String, float> m_advert;
     bool m_active{true};
     float m_spatial_weight{1.0f};
+    godot::TypedArray<godot::String> m_tags;
 
 protected:
     static void _bind_methods();
@@ -27,6 +28,9 @@ public:
 
     void set_spatial_weight(float weight);
     float get_spatial_weight() const;
+
+    void set_tags(const godot::TypedArray<godot::String>& tags);
+    godot::TypedArray<godot::String> get_tags() const;
 
     Action();
     ~Action();

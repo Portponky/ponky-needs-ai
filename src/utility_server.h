@@ -6,6 +6,7 @@
 
 #include <godot_cpp/templates/rid_owner.hpp>
 #include <godot_cpp/templates/rb_map.hpp>
+#include <godot_cpp/templates/rb_set.hpp>
 #include <godot_cpp/templates/vector.hpp>
 
 #include <godot_cpp/variant/typed_array.hpp>
@@ -39,6 +40,7 @@ class UtilityServer : public godot::Object
         float spatial_weight{1.0};
         godot::Vector2 position;
         godot::ObjectID instance_id;
+        godot::Vector<godot::String> tags;
     };
 
     struct ThinkRequest
@@ -47,6 +49,7 @@ class UtilityServer : public godot::Object
         godot::Vector2 position;
         float near_range;
         float far_range;
+        godot::RBSet<godot::String> tags;
     };
 
     mutable bool m_exit_thread{false};
@@ -96,9 +99,10 @@ public:
     void action_set_spatial_weight(godot::RID action, float spatial_weight);
     void action_set_position(godot::RID action, const godot::Vector2& position);
     void action_set_object_id(godot::RID action, uint64_t instance_id);
+    void action_set_tags(godot::RID action, const godot::TypedArray<godot::String>& tags);
 
     // Use
-    void agent_choose_action(godot::RID agent, godot::Vector2 position, float near_distance, float far_distance);
+    void agent_choose_action(godot::RID agent, godot::Vector2 position, float near_distance, float far_distance, const godot::TypedArray<godot::String>& tags);
     void agent_grant(godot::RID agent, const godot::TypedDictionary<godot::String, float>& reward);
 
     UtilityServer();

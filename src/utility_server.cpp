@@ -79,10 +79,20 @@ void UtilityServer::think(const ThinkRequest& t)
     for (RID rid : list)
     {
         InternalAction* ac = m_actions.get_or_null(rid);
-        if (!ac)
+        if (!ac || !ac->active)
             continue; // already deleted
 
         // filters
+        bool filtered = false;
+        for (int n = 0; n < ac->tags.size(); ++n)
+            if (!t.tags.has(ac->tags[n]))
+            {
+                filtered = true;
+                break;
+            }
+
+        if (filtered)
+            continue;
 
         // scale for distance
         float dist_scale{1.0f};
@@ -199,8 +209,9 @@ void UtilityServer::_bind_methods()
     ClassDB::bind_method(D_METHOD("action_set_advert", "rid", "advert"), &UtilityServer::action_set_advert);
     ClassDB::bind_method(D_METHOD("action_set_spatial_weight", "rid", "spatial_weight"), &UtilityServer::action_set_spatial_weight);
     ClassDB::bind_method(D_METHOD("action_set_object_id", "rid", "instance_id"), &UtilityServer::action_set_object_id);
+    ClassDB::bind_method(D_METHOD("action_set_tags", "rid", "tags"), &UtilityServer::action_set_tags);
 
-    ClassDB::bind_method(D_METHOD("agent_choose_action", "rid", "position", "near_distance", "far_distance"), &UtilityServer::agent_choose_action);
+    ClassDB::bind_method(D_METHOD("agent_choose_action", "rid", "position", "near_distance", "far_distance", "tags"), &UtilityServer::agent_choose_action);
     ClassDB::bind_method(D_METHOD("agent_grant", "rid", "reward"), &UtilityServer::action_set_object_id);
 }
 
@@ -404,10 +415,24 @@ void UtilityServer::action_set_object_id(RID action, uint64_t instance_id)
     a->instance_id = instance_id;
 }
 
-void UtilityServer::agent_choose_action(godot::RID agent, godot::Vector2 position, float near_distance, float far_distance)
+void UtilityServer::action_set_tags(godot::RID action, const godot::TypedArray<godot::String>& tags)
 {
+    InternalAction* a = m_actions.get_or_null(action);
+    ERR_FAIL_NULL(a);
+
+    a->tags.clear();
+    for (int n = 0; n < tags.size(); ++n)
+        a->tags.push_back(tags[n]);
+}
+
+void UtilityServer::agent_choose_action(godot::RID agent, godot::Vector2 position, float near_distance, float far_distance, const godot::TypedArray<godot::String>& tags)
+{
+    RBSet<String> tag_set;
+    for (int n = 0; n < tags.size(); ++n)
+        tag_set.insert(tags[n]);
+
     m_input_mutex->lock();
-    m_requests.append({agent, position, near_distance, far_distance});
+    m_requests.append({agent, position, near_distance, far_distance, tag_set});
     m_input_mutex->unlock();
 }
 

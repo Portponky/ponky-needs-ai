@@ -36,9 +36,14 @@ void Agent::_bind_methods()
 
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "decaying"), "set_decaying", "get_decaying");
 
+    ClassDB::bind_method(D_METHOD("set_tags", "tags"), &Agent::set_tags);
+    ClassDB::bind_method(D_METHOD("get_tags"), &Agent::get_tags);
+
+    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "tags", PROPERTY_HINT_TYPE_STRING, String::num(Variant::STRING) + ":"), "set_tags", "get_tags");
+
     ClassDB::bind_method(D_METHOD("get_need_value", "name"), &Agent::get_need_value);
     ClassDB::bind_method(D_METHOD("set_need_value", "name", "value"), &Agent::set_need_value);
-    ClassDB::bind_method(D_METHOD("choose_action", "near_distance", "far_distance"), &Agent::choose_action);
+    ClassDB::bind_method(D_METHOD("choose_action", "near_distance", "far_distance", "tags"), &Agent::choose_action, DEFVAL(TypedArray<String>{}));
     ClassDB::bind_method(D_METHOD("grant", "reward"), &Agent::grant);
 
     ADD_SIGNAL(MethodInfo("action_chosen", PropertyInfo(Variant::OBJECT, "action", PROPERTY_HINT_RESOURCE_TYPE, "Action")));
@@ -103,17 +108,14 @@ bool Agent::get_decaying() const
     return m_decaying;
 }
 
-void Agent::choose_action(float near_distance, float far_distance)
+void Agent::set_tags(const godot::TypedArray<godot::String>& tags)
 {
-    ERR_FAIL_COND(near_distance < 0.0f);
-    ERR_FAIL_COND(far_distance <= near_distance);
-
-    UtilityServer::get_singleton()->agent_choose_action(m_rid, get_global_position(), near_distance, far_distance);
+    m_tags = tags;
 }
 
-void Agent::grant(const godot::TypedDictionary<godot::String, float>& reward)
+godot::TypedArray<godot::String> Agent::get_tags() const
 {
-    UtilityServer::get_singleton()->agent_grant(m_rid, reward);
+    return m_tags;
 }
 
 float Agent::get_need_value(const godot::String& name) const
@@ -124,6 +126,22 @@ float Agent::get_need_value(const godot::String& name) const
 void Agent::set_need_value(const godot::String& name, float value)
 {
     UtilityServer::get_singleton()->agent_set_need_score(m_rid, name, value);
+}
+
+void Agent::choose_action(float near_distance, float far_distance, const godot::TypedArray<godot::String>& tags)
+{
+    ERR_FAIL_COND(near_distance < 0.0f);
+    ERR_FAIL_COND(far_distance <= near_distance);
+
+    TypedArray<String> all_tags = m_tags;
+    all_tags.append_array(m_tags);
+
+    UtilityServer::get_singleton()->agent_choose_action(m_rid, get_global_position(), near_distance, far_distance, all_tags);
+}
+
+void Agent::grant(const godot::TypedDictionary<godot::String, float>& reward)
+{
+    UtilityServer::get_singleton()->agent_grant(m_rid, reward);
 }
 
 void Agent::callback_action(uint64_t instance_id)

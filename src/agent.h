@@ -15,6 +15,7 @@ class Agent : public godot::Node2D
     float m_consideration_fraction{0.9};
     float m_consideration_weight{0.5};
     bool m_decaying{true};
+    godot::TypedArray<godot::String> m_tags;
 
 protected:
     static void _bind_methods();
@@ -33,10 +34,13 @@ public:
     void set_decaying(bool decaying);
     bool get_decaying() const;
 
+    void set_tags(const godot::TypedArray<godot::String>& tags);
+    godot::TypedArray<godot::String> get_tags() const;
+
     float get_need_value(const godot::String& name) const;
     void set_need_value(const godot::String& name, float value);
 
-    void choose_action(float near_distance, float far_distance);
+    void choose_action(float near_distance, float far_distance, const godot::TypedArray<godot::String>& tags = {});
     void grant(const godot::TypedDictionary<godot::String, float>& reward);
 
     void callback_action(uint64_t instance_id);
