@@ -99,7 +99,7 @@ void UtilityServer::think(const ThinkRequest& t)
         if (ac->spatial_weight > 0.0f)
         {
             float dist = t.position.distance_to(ac->position);
-            dist_scale = UtilityFunctions::minf(1.0f, UtilityFunctions::inverse_lerp(t.far_range, t.near_range, dist / ac->spatial_weight));
+            dist_scale = UtilityFunctions::minf(1.0f, UtilityFunctions::inverse_lerp(t.far_range, t.near_range, ac->spatial_weight * dist));
         }
 
         if (dist_scale <= 0.0f)
