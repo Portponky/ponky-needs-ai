@@ -1,15 +1,38 @@
-[gd_scene load_steps=3 format=3 uid="uid://h0l73w1oqvd2"]
+[gd_scene load_steps=4 format=3 uid="uid://h0l73w1oqvd2"]
 
+[ext_resource type="Script" uid="uid://b51a0ltkdgj0m" path="res://objects/Desk.gd" id="1_bd715"]
 [ext_resource type="Texture2D" uid="uid://dlp71b02hmob" path="res://assets/desk.png" id="1_vqlg1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6637w"]
 size = Vector2(10, 5)
 
 [node name="Desk" type="StaticBody2D"]
+script = ExtResource("1_bd715")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 position = Vector2(0, -2)
 texture = ExtResource("1_vqlg1")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="Shape" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_6637w")
+
+[node name="WorkPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, 6)
+
+[node name="GetWorker" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"work": 0.2
+})
+spatial_weight = 0.0
+tags = Array[String](["unassigned"])
+unique_name_in_owner = true
+
+[node name="DoWork" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"social": -0.02,
+"work": 0.2
+})
+active = false
+spatial_weight = 0.2
+unique_name_in_owner = true

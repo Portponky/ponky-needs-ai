@@ -89,6 +89,7 @@ float Action::get_spatial_weight() const
 void Action::set_tags(const godot::TypedArray<godot::String>& tags)
 {
     m_tags = tags;
+    UtilityServer::get_singleton()->action_set_tags(m_rid, tags);
 }
 
 godot::TypedArray<godot::String> Action::get_tags() const

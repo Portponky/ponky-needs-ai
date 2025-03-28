@@ -11,7 +11,7 @@ UtilityServer* UtilityServer::s_singleton{nullptr};
 
 void UtilityServer::thread_func()
 {
-    uint64_t msdelay = 50;
+    uint64_t sleep_delay_ms = 20;
 
     while (!m_exit_thread)
     {
@@ -29,13 +29,10 @@ void UtilityServer::thread_func()
         }
         m_input_mutex->unlock();
 
-        if (!pending_think)
-        {
-            OS::get_singleton()->delay_usec(msdelay * 1000);
-            continue;
-        }
+        if (pending_think)
+            think(next);
 
-        think(next);
+        OS::get_singleton()->delay_usec(sleep_delay_ms * 1000);
     }
 }
 

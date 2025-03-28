@@ -1,6 +1,7 @@
 class_name Person extends CharacterBody2D
 
 @export var full_name : String
+var workstation : Node2D
 
 enum Task {
 	THINKING, # waiting for a response from utility server
@@ -33,6 +34,11 @@ func _ready() -> void:
 	}
 	%Agent.grant(noise)
 	
+	# Agents are tagged with the person's name for specific actions
+	# This assumes no workers have the same name, which is fine for this example
+	%Agent.tags.append(full_name)
+	
+	# Wait for a little bit before doing something
 	do_wait(1.0, 2.0)
 	start_next_task()
 
@@ -53,21 +59,23 @@ func do_reward(grant: Dictionary[String, float]) -> void:
 
 func start_next_task() -> void:
 	if _task_queue.is_empty():
-		print("Person %s is thinking..." % full_name)
 		if _current_task != Task.THINKING:
 			_current_task = Task.THINKING
-			%Agent.choose_action(200.0, 300.0)
+			var tags := []
+			if not workstation:
+				tags.append("unassigned")
+			%Agent.choose_action(200.0, 300.0, tags)
 		return
 	
 	var task = _task_queue.pop_front()
 	_current_task = task[0]
 	
-	print("Person %s is %s" % [full_name, Task.keys()[_current_task]])
 	match _current_task:
 		Task.WAIT:
 			_wait_left = task[1]
 		
 		Task.WALK_TO:
+			_walk_direction = Vector2.ZERO
 			%NavAgent.target_position = task[1]
 		
 		Task.REWARD:
@@ -79,8 +87,9 @@ func start_next_task() -> void:
 
 func _on_agent_action_chosen(action: Action) -> void:
 	# probe action for what to do
-	if action.has_method("plan"):
-		action.plan(self)
+	var node = action.owner
+	if node.has_method("plan"):
+		node.plan(self, action)
 	else:
 		do_wait(5.0, 10.0)
 	
@@ -108,11 +117,16 @@ func _process(delta: float) -> void:
 		var offset : Vector2 = %NavAgent.get_next_path_position() - position
 		var ideal := offset.normalized()
 		
-		_walk_direction = (1.1 * _walk_direction + ideal).normalized()
+		if _walk_direction == Vector2.ZERO:
+			_walk_direction = ideal
 		
 		velocity = WALK_SPEED * _walk_direction
 		if move_and_slide():
-			_walk_direction = get_last_slide_collision().get_normal()
-		
+			ideal = get_last_slide_collision().get_normal()
+	
+		var angle := _walk_direction.angle_to(ideal)
+		angle = clampf(angle, -0.2, 0.2)
+		_walk_direction = _walk_direction.rotated(angle)
+	
 		if %NavAgent.is_navigation_finished():
 			start_next_task()
