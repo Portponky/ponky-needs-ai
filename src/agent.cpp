@@ -133,7 +133,7 @@ void Agent::choose_action(float near_distance, float far_distance, const godot::
     ERR_FAIL_COND(near_distance < 0.0f);
     ERR_FAIL_COND(far_distance <= near_distance);
 
-    TypedArray<String> all_tags = m_tags;
+    TypedArray<String> all_tags = m_tags.duplicate();
     all_tags.append_array(tags);
 
     UtilityServer::get_singleton()->agent_choose_action(m_rid, get_global_position(), near_distance, far_distance, all_tags);
