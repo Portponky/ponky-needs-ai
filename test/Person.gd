@@ -2,11 +2,13 @@ class_name Person extends CharacterBody2D
 
 @export var full_name : String
 var workstation : Node2D
+var held : Node2D
 
 enum Task {
 	THINKING, # waiting for a response from utility server
 	WAIT, # for a length of time
 	WALK_TO, # a give destination point
+	GAIN, # an item appears in the person's hand
 	USE, # an item, which is either in hand or nearby
 	GRAB, # an item which is nearby to hand
 	DROP, # place item in hand on the floor
@@ -57,6 +59,10 @@ func do_reward(grant: Dictionary[String, float]) -> void:
 	_task_queue.append([Task.REWARD, grant])
 
 
+func do_gain(scene: String) -> void:
+	_task_queue.append([Task.GAIN, scene])
+
+
 func start_next_task() -> void:
 	if _task_queue.is_empty():
 		if _current_task != Task.THINKING:
@@ -64,6 +70,10 @@ func start_next_task() -> void:
 			var tags := []
 			if not workstation:
 				tags.append("unassigned")
+			if not held:
+				tags.append("empty-handed")
+			else:
+				tags.append("holding-" + held.name.to_lower())
 			%Agent.choose_action(200.0, 300.0, tags)
 		return
 	
@@ -83,6 +93,15 @@ func start_next_task() -> void:
 			%Agent.grant(reward)
 			_current_task = Task.WAIT
 			_wait_left = 0.1
+		
+		Task.GAIN:
+			if held:
+				drop_object()
+			
+			var object = load(task[1]).instantiate()
+			grab_object(object)
+			_current_task = Task.WAIT
+			_wait_left = 0.8
 
 
 func _on_agent_action_chosen(action: Action) -> void:
@@ -106,6 +125,29 @@ func pick_random_point_goal() -> void:
 	# This is a bit silly, for testing!
 	var maps := NavigationServer2D.get_maps()
 	%NavAgent.target_position = NavigationServer2D.map_get_random_point(maps.front(), 1, true)
+
+
+func drop_object() -> void:
+	if !held:
+		return
+	
+	%Hand.remove_child(held)
+	held.position = position
+	add_sibling(held)
+	held = null
+
+
+func grab_object(object: Node2D) -> void:
+	if held:
+		return
+	
+	# distance check
+	
+	if object.is_inside_tree():
+		object.get_parent().remove_child(object)
+	object.position = Vector2.ZERO
+	%Hand.add_child(object)
+	held = object
 
 
 func _process(delta: float) -> void:

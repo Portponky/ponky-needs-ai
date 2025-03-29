@@ -35,4 +35,5 @@ advert = Dictionary[String, float]({
 })
 active = false
 spatial_weight = 0.2
+tags = Array[String](["empty-handed"])
 unique_name_in_owner = true
