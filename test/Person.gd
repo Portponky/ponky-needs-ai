@@ -68,6 +68,10 @@ func do_destroy() -> void:
 	_task_queue.append([Task.DESTROY])
 
 
+func do_grab(object: Node2D) -> void:
+	_task_queue.append([Task.GRAB, object])
+
+
 func do_drop() -> void:
 	_task_queue.append([Task.DROP])
 
@@ -113,9 +117,17 @@ func start_next_task() -> void:
 		
 		Task.DESTROY:
 			if held:
-				drop_object().queue_free()
+				held.queue_free()
+				held = null
 			
 			_wait_left = 0.8
+		
+		Task.GRAB:
+			if held:
+				drop_object()
+			grab_object(task[1])
+			
+			_wait_left = 0.6
 		
 		Task.DROP:
 			if held:
@@ -130,6 +142,7 @@ func _on_agent_action_chosen(action: Action) -> void:
 	if node.has_method("plan"):
 		node.plan(self, action)
 	else:
+		print("Action ", action, " has no plan method")
 		do_wait(5.0, 10.0)
 	
 	start_next_task()

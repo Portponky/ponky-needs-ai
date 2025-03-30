@@ -1,6 +1,6 @@
 extends Node2D
 
-const PERSON_LIMIT = 1
+const PERSON_LIMIT = 20
 
 func _ready() -> void:
 	var person_count = 0
