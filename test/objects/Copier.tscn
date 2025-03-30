@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://dnoh3npg88mbb"]
+
+[ext_resource type="Script" uid="uid://wu6vwrpiwora" path="res://objects/Copier.gd" id="1_uarmt"]
+[ext_resource type="Texture2D" uid="uid://csw5t6786u6k" path="res://assets/copier.png" id="2_gdk3u"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3q5qa"]
+size = Vector2(8, 4)
+
+[node name="Copier" type="StaticBody2D"]
+script = ExtResource("1_uarmt")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(0, -3)
+texture = ExtResource("2_gdk3u")
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_3q5qa")
+
+[node name="CopySomething" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"clean": -0.02,
+"social": 0.07,
+"work": 0.17
+})
+tags = Array[String](["holding-paper"])
+unique_name_in_owner = true
+
+[node name="Timer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 30.0
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

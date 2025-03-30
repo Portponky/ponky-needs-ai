@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://cg5xt3quqow6u"]
+[gd_scene load_steps=3 format=3 uid="uid://cg5xt3quqow6u"]
 
 [ext_resource type="Texture2D" uid="uid://cty1eo1s7agov" path="res://assets/paper.png" id="1_oh6b0"]
+[ext_resource type="Script" uid="uid://crn33np8y2jap" path="res://objects/Paper.gd" id="1_rvdp4"]
 
 [node name="Paper" type="Node2D"]
+script = ExtResource("1_rvdp4")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("1_oh6b0")

@@ -1,5 +1,7 @@
 extends Node2D
 
+const PERSON_LIMIT = 1
+
 func _ready() -> void:
 	var person_count = 0
 	for node in $Things.get_children():
@@ -7,5 +9,5 @@ func _ready() -> void:
 			continue
 		
 		person_count += 1
-		if person_count > 1:
+		if person_count > PERSON_LIMIT:
 			node.queue_free()

@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://co4ap7wa5vfnb"]
+
+[ext_resource type="Texture2D" uid="uid://dur5yy5dt3f73" path="res://assets/cabinet.png" id="1_6fnyl"]
+[ext_resource type="Script" uid="uid://dby0wkepgn5dr" path="res://objects/Cabinet.gd" id="1_a3fip"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_a3fip"]
+size = Vector2(4, 5)
+
+[node name="Cabinet" type="StaticBody2D"]
+script = ExtResource("1_a3fip")
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_a3fip")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(0, -3)
+texture = ExtResource("1_6fnyl")
+
+[node name="FilePaper" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"work": 0.15
+})
+tags = Array[String](["holding-paper"])
+unique_name_in_owner = true

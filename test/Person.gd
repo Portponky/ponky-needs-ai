@@ -9,6 +9,7 @@ enum Task {
 	WAIT, # for a length of time
 	WALK_TO, # a give destination point
 	GAIN, # an item appears in the person's hand
+	DESTROY, # item in hand ceases to exist
 	USE, # an item, which is either in hand or nearby
 	GRAB, # an item which is nearby to hand
 	DROP, # place item in hand on the floor
@@ -63,6 +64,14 @@ func do_gain(scene: String) -> void:
 	_task_queue.append([Task.GAIN, scene])
 
 
+func do_destroy() -> void:
+	_task_queue.append([Task.DESTROY])
+
+
+func do_drop() -> void:
+	_task_queue.append([Task.DROP])
+
+
 func start_next_task() -> void:
 	if _task_queue.is_empty():
 		if _current_task != Task.THINKING:
@@ -73,7 +82,8 @@ func start_next_task() -> void:
 			if not held:
 				tags.append("empty-handed")
 			else:
-				tags.append("holding-" + held.name.to_lower())
+				var type = held.scene_file_path.get_file().left(-5).to_lower()
+				tags.append("holding-" + type)
 			%Agent.choose_action(200.0, 300.0, tags)
 		return
 	
@@ -91,7 +101,6 @@ func start_next_task() -> void:
 		Task.REWARD:
 			var reward : Dictionary[String, float] = task[1]
 			%Agent.grant(reward)
-			_current_task = Task.WAIT
 			_wait_left = 0.1
 		
 		Task.GAIN:
@@ -100,8 +109,19 @@ func start_next_task() -> void:
 			
 			var object = load(task[1]).instantiate()
 			grab_object(object)
-			_current_task = Task.WAIT
 			_wait_left = 0.8
+		
+		Task.DESTROY:
+			if held:
+				drop_object().queue_free()
+			
+			_wait_left = 0.8
+		
+		Task.DROP:
+			if held:
+				drop_object()
+			
+			_wait_left = 0.6
 
 
 func _on_agent_action_chosen(action: Action) -> void:
@@ -127,14 +147,17 @@ func pick_random_point_goal() -> void:
 	%NavAgent.target_position = NavigationServer2D.map_get_random_point(maps.front(), 1, true)
 
 
-func drop_object() -> void:
+func drop_object() -> Node2D:
 	if !held:
 		return
 	
-	%Hand.remove_child(held)
+	remove_child(held)
 	held.position = position
 	add_sibling(held)
+	
+	var dropped = held
 	held = null
+	return dropped
 
 
 func grab_object(object: Node2D) -> void:
@@ -145,13 +168,13 @@ func grab_object(object: Node2D) -> void:
 	
 	if object.is_inside_tree():
 		object.get_parent().remove_child(object)
-	object.position = Vector2.ZERO
-	%Hand.add_child(object)
+	object.position = %Hand.position
+	add_child(object)
 	held = object
 
 
 func _process(delta: float) -> void:
-	if _current_task == Task.WAIT:
+	if _wait_left >= 0.0:
 		_wait_left -= delta
 		if _wait_left < 0.0:
 			start_next_task()
@@ -172,3 +195,6 @@ func _process(delta: float) -> void:
 	
 		if %NavAgent.is_navigation_finished():
 			start_next_task()
+	
+	if velocity.x != 0.0:
+		%Sprite.flip_h = velocity.x < 0.0

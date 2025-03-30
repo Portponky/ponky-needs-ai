@@ -1,10 +1,12 @@
-[gd_scene load_steps=9 format=4 uid="uid://0u8x6wmo0j2b"]
+[gd_scene load_steps=11 format=4 uid="uid://0u8x6wmo0j2b"]
 
 [ext_resource type="Script" uid="uid://7yrboufqe7rg" path="res://Test.gd" id="1_myinc"]
 [ext_resource type="Texture2D" uid="uid://tj0hwbsw4vsq" path="res://assets/tiles.png" id="2_8tn2x"]
 [ext_resource type="PackedScene" uid="uid://dsijjepqyn47p" path="res://Person.tscn" id="2_njov2"]
 [ext_resource type="PackedScene" uid="uid://cmk5kwh1w4o46" path="res://objects/Cooler.tscn" id="4_8tn2x"]
 [ext_resource type="PackedScene" uid="uid://h0l73w1oqvd2" path="res://objects/Desk.tscn" id="5_aq4fw"]
+[ext_resource type="PackedScene" uid="uid://co4ap7wa5vfnb" path="res://objects/Cabinet.tscn" id="6_ivycn"]
+[ext_resource type="PackedScene" uid="uid://dnoh3npg88mbb" path="res://objects/Copier.tscn" id="7_q1uvj"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_aq4fw"]
 texture = ExtResource("2_8tn2x")
@@ -153,3 +155,15 @@ position = Vector2(97, 169)
 
 [node name="Desk8" parent="Things" instance=ExtResource("5_aq4fw")]
 position = Vector2(121, 175)
+
+[node name="Cabinet" parent="Things" instance=ExtResource("6_ivycn")]
+position = Vector2(220, 42)
+
+[node name="Cabinet2" parent="Things" instance=ExtResource("6_ivycn")]
+position = Vector2(228, 42)
+
+[node name="Cabinet3" parent="Things" instance=ExtResource("6_ivycn")]
+position = Vector2(237, 42)
+
+[node name="Copier" parent="Things" instance=ExtResource("7_q1uvj")]
+position = Vector2(88, 211)

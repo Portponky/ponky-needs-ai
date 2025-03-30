@@ -65,6 +65,7 @@ script = ExtResource("1_hopiu")
 shape = SubResource("CircleShape2D_hopiu")
 
 [node name="Sprite" type="Sprite2D" parent="."]
+unique_name_in_owner = true
 position = Vector2(0, -5)
 texture = ExtResource("1_0dfyj")
 
@@ -77,7 +78,7 @@ path_max_distance = 30.0
 needs = Array[Need]([SubResource("Need_hopiu"), SubResource("Need_btgww"), SubResource("Need_18vio"), SubResource("Need_l3e8t"), SubResource("Need_w1m2r")])
 unique_name_in_owner = true
 
-[node name="Hand" type="Node2D" parent="."]
+[node name="Hand" type="Marker2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(-3, -7)
 
