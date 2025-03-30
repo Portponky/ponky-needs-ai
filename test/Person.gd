@@ -209,5 +209,5 @@ func _process(delta: float) -> void:
 		if %NavAgent.is_navigation_finished():
 			start_next_task()
 	
-	if velocity.x != 0.0:
+	if abs(velocity.x) > 5.0:
 		%Sprite.flip_h = velocity.x < 0.0

@@ -59,6 +59,7 @@ initial_value = 0.9
 [node name="Person" type="CharacterBody2D"]
 collision_layer = 0
 motion_mode = 1
+wall_min_slide_angle = 0.0
 script = ExtResource("1_hopiu")
 
 [node name="Shape" type="CollisionShape2D" parent="."]
