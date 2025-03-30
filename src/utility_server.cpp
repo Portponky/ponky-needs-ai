@@ -82,7 +82,7 @@ void UtilityServer::think(const ThinkRequest& t)
         // filters
         bool filtered = false;
         for (int n = 0; n < ac->tags.size(); ++n)
-            if (!t.tags.has(ac->tags[n]))
+            if (t.tags.has(ac->tags[n]) == ac->tags[n].begins_with("-"))
             {
                 filtered = true;
                 break;
