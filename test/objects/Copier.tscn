@@ -18,7 +18,6 @@ shape = SubResource("RectangleShape2D_3q5qa")
 
 [node name="CopySomething" type="Action" parent="."]
 advert = Dictionary[String, float]({
-"clean": -0.02,
 "social": 0.07,
 "work": 0.17
 })

@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://txenyqumbti4"]
+
+[ext_resource type="Script" uid="uid://b1p3degy5og01" path="res://objects/Vending.gd" id="1_g8elo"]
+[ext_resource type="Texture2D" uid="uid://dlsg4l1ykew1i" path="res://assets/vending.png" id="1_jlg5u"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_g8elo"]
+size = Vector2(8, 5)
+
+[node name="Vending" type="StaticBody2D"]
+script = ExtResource("1_g8elo")
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_g8elo")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(0, -3)
+texture = ExtResource("1_jlg5u")
+
+[node name="GetSnacks" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"hunger": 0.1,
+"social": 0.03
+})
+spatial_weight = 1.8
+tags = Array[String](["-holding-snack"])
+unique_name_in_owner = true

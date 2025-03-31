@@ -32,7 +32,7 @@ func _ready() -> void:
 	# Let's add some noise to the initial values of our agents
 	var noise : Dictionary[String, float] = {
 		"hunger": randf_range(-0.2, 0.1),
-		"thirst": randf_range(-0.05, 0.1),
+		"thirst": randf_range(-0.5, 0.1),
 		"work": randf_range(-0.2, 0.2),
 		"social": randf_range(-0.1, 0.1),
 		"clean": randf_range(-0.3, 0.2),

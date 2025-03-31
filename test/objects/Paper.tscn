@@ -11,8 +11,8 @@ texture = ExtResource("1_oh6b0")
 
 [node name="PickUp" type="Action" parent="."]
 advert = Dictionary[String, float]({
-"clean": 0.08,
-"social": 0.06,
+"clean": 0.02,
+"social": 0.05,
 "work": 0.18
 })
 active = false

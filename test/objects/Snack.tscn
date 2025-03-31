@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://dhs7qnonlb8m5"]
+
+[ext_resource type="Script" uid="uid://bg0ppkuw8vol5" path="res://objects/Snack.gd" id="1_jyihl"]
+[ext_resource type="Texture2D" uid="uid://bc8w0vgrun35r" path="res://assets/snack.png" id="2_jtl2a"]
+
+[node name="Snack" type="Node2D"]
+script = ExtResource("1_jyihl")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_jtl2a")
+
+[node name="PickUp" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"hunger": 0.11,
+"social": 0.02
+})
+spatial_weight = 1.4
+tags = Array[String](["-holding-snack"])
+unique_name_in_owner = true
+
+[node name="Chomp" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"hunger": 0.13
+})
+unique_name_in_owner = true

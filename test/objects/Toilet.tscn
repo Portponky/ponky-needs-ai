@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://bjt3gk327tmy5"]
+
+[ext_resource type="Texture2D" uid="uid://cm453imekb4em" path="res://assets/toilet.png" id="1_e8web"]
+[ext_resource type="Script" uid="uid://c46xpf7byhnvn" path="res://objects/Toilet.gd" id="1_hjc6g"]
+
+[node name="Toilet" type="Node2D"]
+script = ExtResource("1_hjc6g")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(0, -1)
+texture = ExtResource("1_e8web")
+
+[node name="Poop" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"clean": 0.6,
+"social": -0.04
+})
+spatial_weight = 4.0
+unique_name_in_owner = true
+
+[node name="Beacon" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"clean": 0.5,
+"social": -0.04
+})
+spatial_weight = 0.3
+unique_name_in_owner = true
+
+[node name="Timer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 12.0
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

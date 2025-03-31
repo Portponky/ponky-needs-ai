@@ -12,7 +12,6 @@ texture = ExtResource("1_p04hn")
 
 [node name="GetWater" type="Action" parent="."]
 advert = Dictionary[String, float]({
-"clean": -0.02,
 "thirst": 0.4
 })
 tags = Array[String](["-holding-water"])

@@ -7,13 +7,14 @@
 radius = 3.0
 
 [sub_resource type="Curve" id="Curve_0dfyj"]
-_data = [Vector2(0, 0), 0.0, 0.238421, 0, 0, Vector2(0.316092, 0.224719), 0.977528, 0.977528, 0, 0, Vector2(0.517241, 0.719101), 1.15298, 1.15298, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 0.238421, 0, 0, Vector2(0.171014, 0.427346), 2.68797, 2.68797, 0, 0, Vector2(0.478261, 0.814073), 0.804953, 0.804953, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 4
 
 [sub_resource type="Need" id="Need_hopiu"]
 name = "hunger"
 response = SubResource("Curve_0dfyj")
-decay_time = 240.0
+attenuation_weight = 1.2
+decay_time = 180.0
 initial_value = 0.9
 
 [sub_resource type="Curve" id="Curve_hopiu"]
@@ -53,7 +54,7 @@ point_count = 4
 [sub_resource type="Need" id="Need_w1m2r"]
 name = "clean"
 response = SubResource("Curve_i2861")
-decay_time = 160.0
+decay_time = 300.0
 initial_value = 0.9
 
 [node name="Person" type="CharacterBody2D"]
