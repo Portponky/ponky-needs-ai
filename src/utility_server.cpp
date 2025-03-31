@@ -60,6 +60,19 @@ void UtilityServer::purge_free_queue()
     }
 }
 
+bool UtilityServer::filter(const ThinkRequest& t, InternalAction* action) const
+{
+    for (int n = 0; n < action->tags_yes.size(); ++n)
+        if (!t.tags.has(action->tags_yes[n]))
+            return true;
+
+    for (int n = 0; n < action->tags_no.size(); ++n)
+        if (t.tags.has(action->tags_no[n]))
+            return true;
+
+    return false;
+}
+
 void UtilityServer::think(const ThinkRequest& t)
 {
     InternalAgent* ag = get_agent_with_decays(t.agent);
@@ -80,15 +93,7 @@ void UtilityServer::think(const ThinkRequest& t)
             continue; // already deleted
 
         // filters
-        bool filtered = false;
-        for (int n = 0; n < ac->tags.size(); ++n)
-            if (t.tags.has(ac->tags[n]) == ac->tags[n].begins_with("-"))
-            {
-                filtered = true;
-                break;
-            }
-
-        if (filtered)
+        if (filter(t, ac))
             continue;
 
         // scale for distance
@@ -417,9 +422,16 @@ void UtilityServer::action_set_tags(godot::RID action, const godot::TypedArray<g
     InternalAction* a = m_actions.get_or_null(action);
     ERR_FAIL_NULL(a);
 
-    a->tags.clear();
+    a->tags_yes.clear();
+    a->tags_no.clear();
     for (int n = 0; n < tags.size(); ++n)
-        a->tags.push_back(tags[n]);
+    {
+        godot::String tag = tags[n];
+        if (tag .begins_with("-"))
+            a->tags_no.push_back(tag.right(-1));
+        else
+            a->tags_yes.push_back(tag);
+    }
 }
 
 void UtilityServer::agent_choose_action(godot::RID agent, godot::Vector2 position, float near_distance, float far_distance, const godot::TypedArray<godot::String>& tags)

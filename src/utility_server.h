@@ -40,7 +40,8 @@ class UtilityServer : public godot::Object
         float spatial_weight{1.0};
         godot::Vector2 position;
         godot::ObjectID instance_id;
-        godot::Vector<godot::String> tags;
+        godot::Vector<godot::String> tags_yes;
+        godot::Vector<godot::String> tags_no;
     };
 
     struct ThinkRequest
@@ -65,6 +66,7 @@ class UtilityServer : public godot::Object
     static UtilityServer* s_singleton;
     void thread_func();
     void purge_free_queue();
+    bool filter(const ThinkRequest& t, InternalAction* action) const;
     void think(const ThinkRequest& t);
 
     InternalAgent* get_agent_with_decays(godot::RID agent);
