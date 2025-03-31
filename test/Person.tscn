@@ -17,13 +17,13 @@ decay_time = 240.0
 initial_value = 0.9
 
 [sub_resource type="Curve" id="Curve_hopiu"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.396552, 0.101124), 0.510015, 0.510015, 0, 0, Vector2(0.764368, 0.460674), 2.6882, 2.6882, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.235632, 0.191011), 0.977528, 0.977528, 0, 0, Vector2(0.678161, 0.88764), 0.68427, 0.68427, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 4
 
 [sub_resource type="Need" id="Need_btgww"]
 name = "thirst"
 response = SubResource("Curve_hopiu")
-decay_time = 150.0
+decay_time = 250.0
 initial_value = 0.9
 
 [sub_resource type="Curve" id="Curve_7h36p"]

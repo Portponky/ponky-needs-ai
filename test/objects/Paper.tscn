@@ -13,9 +13,9 @@ texture = ExtResource("1_oh6b0")
 advert = Dictionary[String, float]({
 "clean": 0.08,
 "social": 0.06,
-"work": 0.12
+"work": 0.18
 })
 active = false
-spatial_weight = 2.0
+spatial_weight = 1.5
 tags = Array[String](["empty-handed"])
 unique_name_in_owner = true

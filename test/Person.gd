@@ -10,9 +10,10 @@ enum Task {
 	WALK_TO, # a give destination point
 	GAIN, # an item appears in the person's hand
 	DESTROY, # item in hand ceases to exist
-	USE, # an item, which is either in hand or nearby
 	GRAB, # an item which is nearby to hand
 	DROP, # place item in hand on the floor
+	USE, # control exclusive access to something
+	LOITER, # move around at random
 	REWARD, # grant a specific advert
 }
 
@@ -21,6 +22,7 @@ var _current_task := Task.WAIT
 var _wait_left : float
 
 const WALK_SPEED := 50.0
+const LOITER_SPEED := 30.0
 var _walk_direction : Vector2
 
 
@@ -30,7 +32,7 @@ func _ready() -> void:
 	# Let's add some noise to the initial values of our agents
 	var noise : Dictionary[String, float] = {
 		"hunger": randf_range(-0.2, 0.1),
-		"thirst": randf_range(-0.1, 0.1),
+		"thirst": randf_range(-0.05, 0.1),
 		"work": randf_range(-0.2, 0.2),
 		"social": randf_range(-0.1, 0.1),
 		"clean": randf_range(-0.3, 0.2),
@@ -53,7 +55,7 @@ func do_wait(min_time: float, max_time: float) -> void:
 
 
 func do_walk_to(pos: Vector2) -> void:
-	_task_queue.append([Task.WALK_TO, pos])
+	_task_queue.append([Task.WALK_TO, pos, 12.0])
 
 
 func do_reward(grant: Dictionary[String, float]) -> void:
@@ -74,6 +76,19 @@ func do_grab(object: Node2D) -> void:
 
 func do_drop() -> void:
 	_task_queue.append([Task.DROP])
+
+
+func do_start_use(object: Node2D) -> void:
+	_task_queue.append([Task.USE, object, true])
+	_task_queue.append([Task.WALK_TO, object.global_position + Vector2(0.0, 8.0), 2.0])
+
+
+func do_stop_use(object: Node2D) -> void:
+	_task_queue.append([Task.USE, object, false])
+
+
+func do_loiter(time: float) -> void:
+	_task_queue.append([Task.LOITER, time])
 
 
 func start_next_task() -> void:
@@ -100,6 +115,7 @@ func start_next_task() -> void:
 		
 		Task.WALK_TO:
 			_walk_direction = Vector2.ZERO
+			%NavAgent.target_desired_distance = task[2]
 			%NavAgent.target_position = task[1]
 		
 		Task.REWARD:
@@ -134,7 +150,25 @@ func start_next_task() -> void:
 				drop_object()
 			
 			_wait_left = 0.6
-
+		
+		Task.USE:
+			var obj : Node2D = task[1]
+			var use : bool = task[2]
+			var being_used = obj.is_in_group("being-used")
+			
+			if being_used and use:
+				_task_queue.push_front([Task.USE, obj, true])
+				_wait_left = randf_range(2.0, 3.0)
+			else:
+				if use:
+					obj.add_to_group("being-used")
+				else:
+					obj.remove_from_group("being-used")
+				_wait_left = 0.5
+		
+		Task.LOITER:
+			_walk_direction = Vector2.RIGHT.rotated(randf() * TAU)
+			_wait_left = task[1]
 
 func _on_agent_action_chosen(action: Action) -> void:
 	# probe action for what to do
@@ -149,8 +183,8 @@ func _on_agent_action_chosen(action: Action) -> void:
 
 
 func _on_agent_no_action_chosen() -> void:
-	# Not much work doing. Wait for a bit.
-	do_wait(5.0, 10.0)
+	# Not much work doing. Loiter for a bit.
+	do_loiter(5.0)
 	start_next_task()
 
 
@@ -177,8 +211,6 @@ func grab_object(object: Node2D) -> void:
 	if held:
 		return
 	
-	# distance check
-	
 	if object.is_inside_tree():
 		object.get_parent().remove_child(object)
 	object.position = %Hand.position
@@ -187,11 +219,7 @@ func grab_object(object: Node2D) -> void:
 
 
 func _process(delta: float) -> void:
-	if _wait_left >= 0.0:
-		_wait_left -= delta
-		if _wait_left < 0.0:
-			start_next_task()
-	elif _current_task == Task.WALK_TO:
+	if _current_task == Task.WALK_TO:
 		var offset : Vector2 = %NavAgent.get_next_path_position() - position
 		var ideal := offset.normalized()
 		
@@ -207,6 +235,15 @@ func _process(delta: float) -> void:
 		_walk_direction = _walk_direction.rotated(angle)
 	
 		if %NavAgent.is_navigation_finished():
+			start_next_task()
+	elif _current_task == Task.LOITER:
+		velocity = LOITER_SPEED * _walk_direction
+		if move_and_slide():
+			_walk_direction = Vector2.RIGHT.rotated(randf() * TAU)
+	
+	if _wait_left >= 0.0:
+		_wait_left -= delta
+		if _wait_left < 0.0:
 			start_next_task()
 	
 	if abs(velocity.x) > 5.0:
