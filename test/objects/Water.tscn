@@ -20,7 +20,6 @@ unique_name_in_owner = true
 
 [node name="Drink" type="Action" parent="."]
 advert = Dictionary[String, float]({
-"clean": -0.03,
 "thirst": 0.5
 })
 active = false

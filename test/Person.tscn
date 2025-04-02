@@ -34,8 +34,8 @@ point_count = 2
 [sub_resource type="Need" id="Need_18vio"]
 name = "work"
 response = SubResource("Curve_7h36p")
-decay_time = 90.0
-initial_value = 0.2
+decay_time = 100.0
+initial_value = 0.4
 
 [sub_resource type="Curve" id="Curve_4umtp"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.431034, 0.247191), 0.906001, 0.906001, 0, 0, Vector2(1, 1), 0.668835, 0.0, 0, 0]
@@ -48,7 +48,7 @@ decay_time = 80.0
 initial_value = 0.7
 
 [sub_resource type="Curve" id="Curve_i2861"]
-_data = [Vector2(0, 0), 0.0, 0.501296, 0, 0, Vector2(0.293103, 0.292135), 1.14442, 1.14442, 0, 0, Vector2(0.591954, 0.808989), 0.977528, 0.977528, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 0.501296, 0, 0, Vector2(0.246377, 0.286041), 1.14442, 1.14442, 0, 0, Vector2(0.472464, 0.940503), 0.366541, 0.366541, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 4
 
 [sub_resource type="Need" id="Need_w1m2r"]
@@ -58,7 +58,7 @@ decay_time = 300.0
 initial_value = 0.9
 
 [node name="Person" type="CharacterBody2D"]
-collision_layer = 0
+collision_layer = 2
 motion_mode = 1
 wall_min_slide_angle = 0.0
 script = ExtResource("1_hopiu")

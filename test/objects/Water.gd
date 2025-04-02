@@ -21,3 +21,4 @@ func plan(person: Person, action: Action) -> void:
 		else:
 			person.do_destroy()
 		person.do_reward(action.advert)
+		person.do_reward({"clean": -0.03})

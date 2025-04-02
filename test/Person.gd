@@ -248,3 +248,13 @@ func _process(delta: float) -> void:
 	
 	if abs(velocity.x) > 5.0:
 		%Sprite.flip_h = velocity.x < 0.0
+
+
+func get_need_values() -> Dictionary:
+	return {
+		"hunger": %Agent.get_need_value("hunger"),
+		"thirst": %Agent.get_need_value("thirst"),
+		"work": %Agent.get_need_value("work"),
+		"social": %Agent.get_need_value("social"),
+		"clean": %Agent.get_need_value("clean"),
+	}

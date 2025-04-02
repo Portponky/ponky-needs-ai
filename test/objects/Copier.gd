@@ -11,6 +11,7 @@ func plan(person: Person, action: Action) -> void:
 		person.do_drop()
 		person.do_gain("res://objects/Paper.tscn")
 		person.do_stop_use(self)
+		person.do_reward(action.advert)
 		%CopySomething.active = false
 		%Timer.start()
 

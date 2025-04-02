@@ -1,0 +1,15 @@
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://cefsrlbe4j1io"]
+
+[ext_resource type="FontFile" uid="uid://cj2c1cf2048wa" path="res://font/beaver.ttf" id="1_4a7tu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4a7tu"]
+bg_color = Color(0.0605303, 0.0605304, 0.0605303, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rxoq1"]
+bg_color = Color(0.369869, 0.683955, 0.405813, 1)
+
+[resource]
+Label/fonts/font = ExtResource("1_4a7tu")
+ProgressBar/fonts/font = ExtResource("1_4a7tu")
+ProgressBar/styles/background = SubResource("StyleBoxFlat_4a7tu")
+ProgressBar/styles/fill = SubResource("StyleBoxFlat_rxoq1")
