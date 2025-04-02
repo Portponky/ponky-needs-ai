@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=4 uid="uid://0u8x6wmo0j2b"]
+[gd_scene load_steps=18 format=4 uid="uid://0u8x6wmo0j2b"]
 
 [ext_resource type="Script" uid="uid://7yrboufqe7rg" path="res://Test.gd" id="1_myinc"]
 [ext_resource type="Texture2D" uid="uid://tj0hwbsw4vsq" path="res://assets/tiles.png" id="2_8tn2x"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://dnoh3npg88mbb" path="res://objects/Copier.tscn" id="7_q1uvj"]
 [ext_resource type="PackedScene" uid="uid://txenyqumbti4" path="res://objects/Vending.tscn" id="7_qs82m"]
 [ext_resource type="PackedScene" uid="uid://bjt3gk327tmy5" path="res://objects/Toilet.tscn" id="8_c4vo5"]
+[ext_resource type="PackedScene" uid="uid://ce2j64tp1n2p0" path="res://objects/BathroomBeacon.tscn" id="9_cqdos"]
 [ext_resource type="Theme" uid="uid://cefsrlbe4j1io" path="res://TooltipTheme.tres" id="10_vwb7u"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_c4vo5"]
@@ -48,6 +49,7 @@ scenes/3/scene = ExtResource("6_ivycn")
 scenes/4/scene = ExtResource("7_q1uvj")
 scenes/5/scene = ExtResource("7_qs82m")
 scenes/6/scene = ExtResource("8_c4vo5")
+scenes/7/scene = ExtResource("9_cqdos")
 
 [sub_resource type="TileSet" id="TileSet_qs82m"]
 tile_size = Vector2i(8, 8)
@@ -66,7 +68,7 @@ navigation_polygon = SubResource("NavigationPolygon_q1uvj")
 
 [node name="Things" type="TileMapLayer" parent="."]
 y_sort_enabled = true
-tile_map_data = PackedByteArray("AAAKAA8AAAAAAAAAAQANAA8AAAAAAAAAAQAQAA8AAAAAAAAAAQATAA8AAAAAAAAAAQAbABMAAAAAAAAABAAVABYAAAAAAAAAAgAuABMAAAAAAAAAAgA1ACEAAAAAAAAAAgAQACcAAAAAAAAAAQALABIAAAAAAAAAAQAPABIAAAAAAAAAAQASABIAAAAAAAAAAQAJABUAAAAAAAAAAQANABUAAAAAAAAAAQASABUAAAAAAAAAAQAhACAAAAAAAAAAAQAlACAAAAAAAAAAAQAdACAAAAAAAAAAAQAZADMAAAAAAAAAAQAbADMAAAAAAAAAAQAdADMAAAAAAAAAAQAgADMAAAAAAAAAAQA9ABUAAAAAAAAAAQA/ABUAAAAAAAAAAQA4AB0AAAAAAAAAAwA5AB0AAAAAAAAAAwA6AB0AAAAAAAAAAwAbAAQAAAAAAAAAAwAfAAQAAAAAAAAAAwAiAAQAAAAAAAAAAwAjAAQAAAAAAAAAAwAhACkAAAAAAAAAAwA7ACQAAAAAAAAAAwA7ACcAAAAAAAAAAwBDACcAAAAAAAAAAwBCAB4AAAAAAAAABABEAC0AAAAAAAAABQAqAAQAAAAAAAAABQAvAAoAAAAAAAAABgAzAAoAAAAAAAAABgA=")
+tile_map_data = PackedByteArray("AAAKAA8AAAAAAAAAAQANAA8AAAAAAAAAAQAQAA8AAAAAAAAAAQATAA8AAAAAAAAAAQAbABMAAAAAAAAABAAVABYAAAAAAAAAAgAuABMAAAAAAAAAAgA1ACEAAAAAAAAAAgAQACcAAAAAAAAAAQALABIAAAAAAAAAAQAPABIAAAAAAAAAAQASABIAAAAAAAAAAQAJABUAAAAAAAAAAQANABUAAAAAAAAAAQASABUAAAAAAAAAAQAhACAAAAAAAAAAAQAlACAAAAAAAAAAAQAdACAAAAAAAAAAAQAZADMAAAAAAAAAAQAbADMAAAAAAAAAAQAdADMAAAAAAAAAAQAgADMAAAAAAAAAAQA9ABUAAAAAAAAAAQA/ABUAAAAAAAAAAQA4AB0AAAAAAAAAAwA5AB0AAAAAAAAAAwA6AB0AAAAAAAAAAwAbAAQAAAAAAAAAAwAfAAQAAAAAAAAAAwAiAAQAAAAAAAAAAwAjAAQAAAAAAAAAAwAhACkAAAAAAAAAAwA7ACQAAAAAAAAAAwA7ACcAAAAAAAAAAwBDACcAAAAAAAAAAwBCAB4AAAAAAAAABABEAC0AAAAAAAAABQAqAAQAAAAAAAAABQAvAAoAAAAAAAAABgAzAAoAAAAAAAAABgAxAAoAAAAAAAAABgAxAAwAAAAAAAAABwA=")
 tile_set = SubResource("TileSet_qs82m")
 
 [node name="Person" parent="Things" instance=ExtResource("2_njov2")]
@@ -149,10 +151,6 @@ full_name = "narancia"
 position = Vector2(225, 146)
 full_name = "abbracio"
 
-[node name="BeaconToilet" parent="Things" instance=ExtResource("8_c4vo5")]
-position = Vector2(396, 84)
-bathroom_broadcast = true
-
 [node name="PopupLayer" type="CanvasLayer" parent="."]
 unique_name_in_owner = true
 
@@ -173,6 +171,7 @@ metadata/_edit_use_anchors_ = true
 
 [node name="Name" type="Label" parent="PopupLayer/Popup"]
 unique_name_in_owner = true
+layout_mode = 0
 offset_left = 2.0
 offset_top = 2.0
 offset_right = 106.0

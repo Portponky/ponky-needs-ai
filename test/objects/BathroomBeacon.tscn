@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://ce2j64tp1n2p0"]
+
+[ext_resource type="Script" uid="uid://blovo4b5ruunl" path="res://objects/BathroomBeacon.gd" id="1_blpdm"]
+[ext_resource type="Texture2D" uid="uid://cm453imekb4em" path="res://assets/toilet.png" id="2_lqnyy"]
+
+[node name="BathroomBeacon" type="Node2D"]
+script = ExtResource("1_blpdm")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+modulate = Color(0.37263, 0.647556, 0.213249, 1)
+texture = ExtResource("2_lqnyy")
+
+[node name="Beacon" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"clean": 0.5,
+"social": -0.04
+})
+spatial_weight = 0.3
+unique_name_in_owner = true

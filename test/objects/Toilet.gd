@@ -1,10 +1,5 @@
 extends Node2D
 
-@export var bathroom_broadcast := false
-
-func _ready() -> void:
-	%Beacon.active = bathroom_broadcast
-
 func plan(person: Person, action: Action) -> void:
 	if action == %Poop:
 		person.do_start_use(self)
@@ -15,9 +10,6 @@ func plan(person: Person, action: Action) -> void:
 		
 		action.active = false
 		%Timer.start()
-	elif action == %Beacon:
-		person.do_walk_to(global_position + Vector2(0, 20))
-		person.do_loiter(0.2)
 
 
 func _on_timer_timeout() -> void:

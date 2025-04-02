@@ -14,7 +14,7 @@ advert = Dictionary[String, float]({
 "thirst": 0.5
 })
 active = false
-spatial_weight = 1.2
+spatial_weight = 1.1
 tags = Array[String](["-holding-water"])
 unique_name_in_owner = true
 
