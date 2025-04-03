@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=3 uid="uid://dwvhynbb8py3k"]
+
+[ext_resource type="Texture2D" uid="uid://gtny7m5txlb7" path="res://assets/coffee.png" id="1_5h4dr"]
+[ext_resource type="Script" uid="uid://dugc1a5awq56u" path="res://objects/Coffee.gd" id="1_5qsku"]
+
+[node name="Coffee" type="Node2D"]
+script = ExtResource("1_5qsku")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_5h4dr")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 25.0
+one_shot = true
+autostart = true
+
+[node name="PickUp" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"social": 0.2,
+"thirst": 0.3
+})
+active = false
+spatial_weight = 1.2
+tags = Array[String](["-holding-coffee", "-holding-water"])
+unique_name_in_owner = true
+
+[node name="Drink" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"social": 0.2,
+"thirst": 0.3
+})
+active = false
+unique_name_in_owner = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

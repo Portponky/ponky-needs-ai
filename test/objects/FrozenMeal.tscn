@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://od3tfb0kc3k0"]
+
+[ext_resource type="Texture2D" uid="uid://duiab52mcxp3l" path="res://assets/frozen-food.png" id="1_ilpto"]
+
+[node name="FrozenMeal" type="Node2D"]
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_ilpto")

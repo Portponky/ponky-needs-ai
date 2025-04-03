@@ -13,7 +13,7 @@ texture = ExtResource("1_oh6b0")
 advert = Dictionary[String, float]({
 "clean": 0.02,
 "social": 0.05,
-"work": 0.18
+"work": 0.38
 })
 active = false
 spatial_weight = 1.5

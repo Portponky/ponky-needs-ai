@@ -19,7 +19,7 @@ texture = ExtResource("1_6fnyl")
 
 [node name="FilePaper" type="Action" parent="."]
 advert = Dictionary[String, float]({
-"work": 0.42
+"work": 0.5
 })
 tags = Array[String](["holding-paper"])
 unique_name_in_owner = true

@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://72isa5wnoc7k"]
+
+[ext_resource type="Script" uid="uid://dup5hmwthinl6" path="res://objects/Sandwich.gd" id="1_2j1ty"]
+[ext_resource type="Texture2D" uid="uid://bldmi7k3o6x1u" path="res://assets/sandwich.png" id="1_3tsk0"]
+
+[node name="Sandwich" type="Node2D"]
+script = ExtResource("1_2j1ty")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_3tsk0")
+
+[node name="PickUp" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"hunger": 0.3,
+"social": 0.08
+})
+active = false
+spatial_weight = 1.4
+tags = Array[String](["-holding-sandwich", "-holding-cooked-meal", "-holding-frozen-meal"])
+unique_name_in_owner = true
+
+[node name="Eat" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"hunger": 0.3
+})
+active = false
+unique_name_in_owner = true

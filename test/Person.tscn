@@ -1,7 +1,8 @@
-[gd_scene load_steps=14 format=3 uid="uid://dsijjepqyn47p"]
+[gd_scene load_steps=15 format=3 uid="uid://dsijjepqyn47p"]
 
 [ext_resource type="Texture2D" uid="uid://ku4gfqcano7t" path="res://assets/person.png" id="1_0dfyj"]
 [ext_resource type="Script" uid="uid://d244hl4amvl83" path="res://Person.gd" id="1_hopiu"]
+[ext_resource type="Texture2D" uid="uid://b005hqaxamwag" path="res://assets/chat.png" id="3_btgww"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hopiu"]
 radius = 3.0
@@ -83,6 +84,19 @@ unique_name_in_owner = true
 [node name="Hand" type="Marker2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(-3, -7)
+
+[node name="Chat" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"social": 0.35
+})
+active = false
+spatial_weight = 2.5
+unique_name_in_owner = true
+
+[node name="ChatIndicator" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(0, -16)
+texture = ExtResource("3_btgww")
 
 [connection signal="action_chosen" from="Agent" to="." method="_on_agent_action_chosen"]
 [connection signal="no_action_chosen" from="Agent" to="." method="_on_agent_no_action_chosen"]

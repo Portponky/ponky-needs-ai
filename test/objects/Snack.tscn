@@ -11,8 +11,8 @@ texture = ExtResource("2_jtl2a")
 
 [node name="PickUp" type="Action" parent="."]
 advert = Dictionary[String, float]({
-"hunger": 0.11,
-"social": 0.02
+"hunger": 0.15,
+"social": 0.12
 })
 spatial_weight = 1.4
 tags = Array[String](["-holding-snack"])

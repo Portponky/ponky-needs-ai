@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://is2hd3ltcesh"]
+
+[ext_resource type="Script" uid="uid://yy3gl10aw46e" path="res://objects/Sofa.gd" id="1_28wya"]
+[ext_resource type="Texture2D" uid="uid://bgwray7v3quni" path="res://assets/sofa.png" id="1_e7iwx"]
+
+[node name="Sofa" type="Node2D"]
+script = ExtResource("1_28wya")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(0, -1)
+texture = ExtResource("1_e7iwx")
+
+[node name="Relax" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"social": 0.1,
+"work": -0.05
+})
+unique_name_in_owner = true
+
+[node name="Sit" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"social": 0.2
+})
+spatial_weight = 1.8
+unique_name_in_owner = true

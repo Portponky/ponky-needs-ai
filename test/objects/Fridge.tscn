@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://bhuovst4hk2aa"]
+
+[ext_resource type="Texture2D" uid="uid://cvujhbk2rylfu" path="res://assets/fridge.png" id="1_giftx"]
+[ext_resource type="Script" uid="uid://boqxnslnnnwfr" path="res://objects/Fridge.gd" id="1_gukv4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gukv4"]
+size = Vector2(8, 4)
+
+[node name="Fridge" type="StaticBody2D"]
+script = ExtResource("1_gukv4")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(0, -3)
+texture = ExtResource("1_giftx")
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_gukv4")
+
+[node name="GrabSomething" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"hunger": 0.4
+})
+spatial_weight = 0.6
+tags = Array[String](["-holding-sandwich", "-holding-frozen-meal", "-holding-cooked-meal"])
+unique_name_in_owner = true

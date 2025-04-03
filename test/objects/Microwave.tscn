@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://cujwixpx6t3x3"]
+
+[ext_resource type="Texture2D" uid="uid://bggnb6hlulpy2" path="res://assets/microwave.png" id="1_t54dl"]
+[ext_resource type="Script" uid="uid://b3jwdburif2v5" path="res://objects/Microwave.gd" id="1_yo7fk"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yo7fk"]
+size = Vector2(8, 6)
+
+[node name="Microwave" type="StaticBody2D"]
+script = ExtResource("1_yo7fk")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(0, -2)
+texture = ExtResource("1_t54dl")
+
+[node name="Shape" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_yo7fk")
+
+[node name="HeatCoffee" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"clean": 0.05,
+"social": 0.25,
+"thirst": 0.3
+})
+spatial_weight = 0.8
+tags = Array[String](["holding-cold-coffee"])
+unique_name_in_owner = true

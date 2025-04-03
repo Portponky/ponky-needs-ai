@@ -3,6 +3,7 @@ class_name Person extends CharacterBody2D
 @export var full_name : String
 var workstation : Node2D
 var held : Node2D
+@onready var chat_indicator = $ChatIndicator
 
 enum Task {
 	THINKING, # waiting for a response from utility server
@@ -22,9 +23,9 @@ var _current_task := Task.WAIT
 var _wait_left : float
 
 const WALK_SPEED := 50.0
-const LOITER_SPEED := 30.0
+const LOITER_SPEED := 15.0
 var _walk_direction : Vector2
-
+var _walk_speed := 0.0
 
 @onready var _task_queue := []
 
@@ -42,6 +43,8 @@ func _ready() -> void:
 	# Agents are tagged with the person's name for specific actions
 	# This assumes no workers have the same name, which is fine for this example
 	%Agent.tags.append(full_name)
+	
+	%Chat.tags = ["-" + full_name]
 	
 	# Wait for a little bit before doing something
 	do_wait(1.0, 2.0)
@@ -102,13 +105,24 @@ func start_next_task() -> void:
 				tags.append("empty-handed")
 			else:
 				var type = held.scene_file_path.get_file().left(-5).to_lower()
+				if "object_name" in held:
+					type = held.object_name
 				tags.append("holding-" + type)
+				
+				if held.is_in_group("drink"):
+					tags.append("holding-drink")
+				elif held.is_in_group("food"):
+					tags.append("holding-food")
+			
 			%Agent.choose_action(200.0, 300.0, tags)
 		return
+	
+	%Chat.active = false
 	
 	var task = _task_queue.pop_front()
 	_current_task = task[0]
 	
+	_wait_left = 0.1
 	match _current_task:
 		Task.WAIT:
 			_wait_left = task[1]
@@ -117,11 +131,11 @@ func start_next_task() -> void:
 			_walk_direction = Vector2.ZERO
 			%NavAgent.target_desired_distance = task[2]
 			%NavAgent.target_position = task[1]
+			_wait_left = -1
 		
 		Task.REWARD:
 			var reward : Dictionary[String, float] = task[1]
 			%Agent.grant(reward)
-			_wait_left = 0.1
 		
 		Task.GAIN:
 			if held:
@@ -129,27 +143,20 @@ func start_next_task() -> void:
 			
 			var object = load(task[1]).instantiate()
 			grab_object(object)
-			_wait_left = 0.8
 		
 		Task.DESTROY:
 			if held:
 				held.queue_free()
 				held = null
-			
-			_wait_left = 0.8
 		
 		Task.GRAB:
 			if held:
 				drop_object()
 			grab_object(task[1])
-			
-			_wait_left = 0.6
 		
 		Task.DROP:
 			if held:
 				drop_object()
-			
-			_wait_left = 0.6
 		
 		Task.USE:
 			var obj : Node2D = task[1]
@@ -158,17 +165,21 @@ func start_next_task() -> void:
 			
 			if being_used and use:
 				_task_queue.push_front([Task.USE, obj, true])
-				_wait_left = randf_range(2.0, 3.0)
+				_current_task = Task.LOITER
+				_walk_direction = Vector2.RIGHT.rotated(randf() * TAU)
+				_wait_left = randf_range(0.8, 1.2)
+				%Chat.active = true
 			else:
 				if use:
 					obj.add_to_group("being-used")
 				else:
 					obj.remove_from_group("being-used")
-				_wait_left = 0.5
 		
 		Task.LOITER:
+			%Chat.active = true
 			_walk_direction = Vector2.RIGHT.rotated(randf() * TAU)
 			_wait_left = task[1]
+
 
 func _on_agent_action_chosen(action: Action) -> void:
 	# probe action for what to do
@@ -226,15 +237,17 @@ func _process(delta: float) -> void:
 		if _walk_direction == Vector2.ZERO:
 			_walk_direction = ideal
 		
-		velocity = WALK_SPEED * _walk_direction
+		_walk_speed = lerp(_walk_speed, WALK_SPEED, 0.5)
+		velocity = _walk_speed * _walk_direction
 		if move_and_slide():
 			ideal = get_last_slide_collision().get_normal()
+			_walk_speed = max(0.0, _walk_speed - 10.0)
 	
 		var angle := _walk_direction.angle_to(ideal)
 		angle = clampf(angle, -0.2, 0.2)
 		_walk_direction = _walk_direction.rotated(angle)
 	
-		if %NavAgent.is_navigation_finished():
+		if %NavAgent.is_target_reached() or %NavAgent.is_navigation_finished():
 			start_next_task()
 	elif _current_task == Task.LOITER:
 		velocity = LOITER_SPEED * _walk_direction
@@ -258,3 +271,22 @@ func get_need_values() -> Dictionary:
 		"social": %Agent.get_need_value("social"),
 		"clean": %Agent.get_need_value("clean"),
 	}
+
+
+func plan(person: Person, action: Action) -> void:
+	if action == %Chat:
+		# someone's chatting with me!!
+		person.do_walk_to(global_position)
+		person.do_wait(3.0, 3.0)
+		person.do_reward(action.advert)
+		
+		# fix the front pushing here, and in general
+		_task_queue.push_front([Task.REWARD, action.advert])
+		_task_queue.push_front([Task.WAIT, 4.0])
+		start_next_task()
+		
+		chat_indicator.visible = true
+		person.chat_indicator.visible = true
+		await get_tree().create_timer(3.0).timeout
+		chat_indicator.visible = false
+		person.chat_indicator.visible = false
