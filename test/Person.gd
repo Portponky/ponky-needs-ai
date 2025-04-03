@@ -104,9 +104,12 @@ func start_next_task() -> void:
 			if not held:
 				tags.append("empty-handed")
 			else:
+				# default to scene file name in lowercase
 				var type = held.scene_file_path.get_file().left(-5).to_lower()
+				# but if the scene has an object_name variable, use that instead
 				if "object_name" in held:
 					type = held.object_name
+				
 				tags.append("holding-" + type)
 				
 				if held.is_in_group("drink"):

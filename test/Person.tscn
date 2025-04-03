@@ -15,7 +15,7 @@ point_count = 4
 name = "hunger"
 response = SubResource("Curve_0dfyj")
 attenuation_weight = 1.2
-decay_time = 180.0
+decay_time = 250.0
 initial_value = 0.9
 
 [sub_resource type="Curve" id="Curve_hopiu"]
@@ -25,7 +25,7 @@ point_count = 4
 [sub_resource type="Need" id="Need_btgww"]
 name = "thirst"
 response = SubResource("Curve_hopiu")
-decay_time = 250.0
+decay_time = 180.0
 initial_value = 0.9
 
 [sub_resource type="Curve" id="Curve_7h36p"]
@@ -45,7 +45,7 @@ point_count = 3
 [sub_resource type="Need" id="Need_l3e8t"]
 name = "social"
 response = SubResource("Curve_4umtp")
-decay_time = 80.0
+decay_time = 180.0
 initial_value = 0.7
 
 [sub_resource type="Curve" id="Curve_i2861"]
