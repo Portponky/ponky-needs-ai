@@ -25,3 +25,12 @@ advert = Dictionary[String, float]({
 spatial_weight = 0.8
 tags = Array[String](["holding-cold-coffee"])
 unique_name_in_owner = true
+
+[node name="HeatMeal" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"hunger": 0.66,
+"social": 0.05
+})
+spatial_weight = 0.8
+tags = Array[String](["holding-frozen-meal"])
+unique_name_in_owner = true

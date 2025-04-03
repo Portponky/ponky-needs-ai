@@ -1,8 +1,27 @@
-[gd_scene load_steps=2 format=3 uid="uid://cvywahkqe2yyo"]
+[gd_scene load_steps=3 format=3 uid="uid://cvywahkqe2yyo"]
 
 [ext_resource type="Texture2D" uid="uid://cyc5j84lu67du" path="res://assets/cooked-food.png" id="1_h4h1e"]
+[ext_resource type="Script" uid="uid://bjq0pk6omucte" path="res://objects/CookedMeal.gd" id="1_ie7ne"]
 
 [node name="CookedMeal" type="Node2D"]
+script = ExtResource("1_ie7ne")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("1_h4h1e")
+
+[node name="PickUp" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"hunger": 0.66,
+"social": 0.08
+})
+active = false
+spatial_weight = 1.1
+tags = Array[String](["-holding-food"])
+unique_name_in_owner = true
+
+[node name="Eat" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"hunger": 0.7
+})
+active = false
+unique_name_in_owner = true

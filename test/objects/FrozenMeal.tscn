@@ -1,8 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://od3tfb0kc3k0"]
+[gd_scene load_steps=3 format=3 uid="uid://od3tfb0kc3k0"]
 
 [ext_resource type="Texture2D" uid="uid://duiab52mcxp3l" path="res://assets/frozen-food.png" id="1_ilpto"]
+[ext_resource type="Script" uid="uid://k0v6a1562u5q" path="res://objects/FrozenMeal.gd" id="1_lmaff"]
 
 [node name="FrozenMeal" type="Node2D"]
+script = ExtResource("1_lmaff")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("1_ilpto")
+
+[node name="PickUp" type="Action" parent="."]
+advert = Dictionary[String, float]({
+"hunger": 0.66
+})
+active = false
+spatial_weight = 1.2
+tags = Array[String](["-holding-food", "-holding-drink"])
+unique_name_in_owner = true
