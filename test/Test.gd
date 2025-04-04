@@ -1,11 +1,20 @@
 extends Node2D
 
+const PERSON = preload("res://Person.tscn")
+
 @export var mouse_selection_shape: Shape2D
 @onready var shape_query = PhysicsShapeQueryParameters2D.new()
 
 const PERSON_LIMIT = 20
 
+var forenames : Array[String]
+var surnames : Array[String]
+var used_names := {}
+
 func _ready() -> void:
+	forenames = load_text_as_string_array("res://assets/forename.txt")
+	surnames = load_text_as_string_array("res://assets/surname.txt")
+
 	var person_count = 0
 	for node in $Things.get_children():
 		if node is not Person:
@@ -19,6 +28,36 @@ func _ready() -> void:
 	shape_query.collide_with_bodies = true
 	shape_query.collision_mask = 2
 	shape_query.shape = mouse_selection_shape
+
+
+func load_text_as_string_array(filename: String) -> Array[String]:
+	var file = FileAccess.open(filename, FileAccess.READ)
+	var result : Array[String] = []
+	
+	while not file.eof_reached():
+		result.append(file.get_line())
+	
+	# last entry is blank
+	if result.back().is_empty():
+		result.pop_back()
+	
+	return result
+
+
+func generate_name() -> String:
+	var generated_name := ""
+	while generated_name.is_empty() or used_names.has(generated_name):
+		generated_name = "%s %s" % [forenames.pick_random(), surnames.pick_random()]
+	used_names[generated_name] = true
+	return generated_name
+
+
+func create_person() -> Person:
+	var person = PERSON.instantiate()
+	person.full_name = generate_name()
+	person.global_position = %Spawn.global_position
+	%Things.add_child(person)
+	return person
 
 
 func _process(_delta: float) -> void:
@@ -44,3 +83,8 @@ func _process(_delta: float) -> void:
 	%WorkValue.value = values.work
 	%SocialValue.value = values.social
 	%CleanValue.value = values.clean
+
+
+func _on_add_person_pressed() -> void:
+	var person = create_person()
+	print("%s arrived" % person.full_name)

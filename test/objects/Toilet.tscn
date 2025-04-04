@@ -15,7 +15,7 @@ advert = Dictionary[String, float]({
 "clean": 0.8,
 "social": -0.04
 })
-spatial_weight = 4.0
+spatial_weight = 3.0
 unique_name_in_owner = true
 
 [node name="Timer" type="Timer" parent="."]

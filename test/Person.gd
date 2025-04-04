@@ -117,7 +117,7 @@ func start_next_task() -> void:
 				elif held.is_in_group("food"):
 					tags.append("holding-food")
 			
-			%Agent.choose_action(200.0, 300.0, tags)
+			%Agent.choose_action(150.0, 250.0, tags)
 		return
 	
 	%Chat.active = false
