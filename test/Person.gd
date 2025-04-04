@@ -28,6 +28,7 @@ var _walk_direction : Vector2
 var _walk_speed := 0.0
 
 @onready var _task_queue := []
+var _stashed_task_queue := []
 
 func _ready() -> void:
 	# Let's add some noise to the initial values of our agents
@@ -94,7 +95,16 @@ func do_loiter(time: float) -> void:
 	_task_queue.append([Task.LOITER, time])
 
 
+func do_stash_tasks() -> void:
+	_task_queue.append_array(_stashed_task_queue)
+	_stashed_task_queue = _task_queue
+	_task_queue = []
+
+
 func start_next_task() -> void:
+	_task_queue.append_array(_stashed_task_queue)
+	_stashed_task_queue.clear()
+	
 	if _task_queue.is_empty():
 		if _current_task != Task.THINKING:
 			_current_task = Task.THINKING
@@ -168,11 +178,9 @@ func start_next_task() -> void:
 			var being_used = obj.is_in_group("being-used")
 			
 			if being_used and use:
-				_task_queue.push_front([Task.USE, obj, true])
-				_current_task = Task.LOITER
-				_walk_direction = Vector2.RIGHT.rotated(randf() * TAU)
-				_wait_left = randf_range(0.8, 1.2)
-				%Chat.active = true
+				do_stash_tasks()
+				do_loiter(0.8)
+				do_start_use(obj)
 			else:
 				if use:
 					obj.add_to_group("being-used")
@@ -285,8 +293,9 @@ func plan(person: Person, action: Action) -> void:
 		person.do_reward(action.advert)
 		
 		# fix the front pushing here, and in general
-		_task_queue.push_front([Task.REWARD, action.advert])
-		_task_queue.push_front([Task.WAIT, 4.0])
+		do_stash_tasks()
+		do_wait(4.0, 4.0)
+		do_reward(action.advert)
 		start_next_task()
 		
 		chat_indicator.visible = true
