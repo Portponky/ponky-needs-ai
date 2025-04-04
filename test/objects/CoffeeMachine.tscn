@@ -18,8 +18,8 @@ shape = SubResource("RectangleShape2D_yo7fk")
 
 [node name="MakeCoffee" type="Action" parent="."]
 advert = Dictionary[String, float]({
-"social": 0.2,
-"thirst": 0.3
+"social": 0.05,
+"thirst": 0.25
 })
-tags = Array[String](["-holding-coffee"])
+tags = Array[String](["-holding-drink", "-holding-food"])
 unique_name_in_owner = true

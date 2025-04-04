@@ -15,5 +15,5 @@ advert = Dictionary[String, float]({
 "clean": 0.5,
 "social": -0.04
 })
-spatial_weight = 0.3
+spatial_weight = 0.75
 unique_name_in_owner = true

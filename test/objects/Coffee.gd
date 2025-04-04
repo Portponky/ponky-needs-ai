@@ -1,7 +1,7 @@
 extends Node2D
 
 var object_name := "coffee"
-
+var glugs := 2
 
 func _enter_tree() -> void:
 	var holder = get_parent() as Person
@@ -19,7 +19,8 @@ func plan(person: Person, action: Action) -> void:
 		%PickUp.active = false
 	elif action == %Drink:
 		person.do_wait(2.0, 3.0)
-		if randf() < 0.4:
+		glugs -= 1
+		if glugs == 0:
 			person.do_destroy()
 		person.do_reward(action.advert)
 		person.do_reward({"clean": -0.05})

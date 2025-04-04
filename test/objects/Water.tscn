@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://b23g47heo05to" path="res://assets/water.png" id="1_1mjbf"]
 [ext_resource type="Script" uid="uid://jsnjh07f43lj" path="res://objects/Water.gd" id="1_nb3ar"]
 
-[node name="Water" type="Node2D"]
+[node name="Water" type="Node2D" groups=["drink"]]
 script = ExtResource("1_nb3ar")
 
 [node name="Sprite" type="Sprite2D" parent="."]
@@ -11,11 +11,12 @@ texture = ExtResource("1_1mjbf")
 
 [node name="PickUp" type="Action" parent="."]
 advert = Dictionary[String, float]({
+"social": 0.02,
 "thirst": 0.5
 })
 active = false
 spatial_weight = 1.2
-tags = Array[String](["-holding-water", "-holding-coffee"])
+tags = Array[String](["-holding-drink", "-holding-food"])
 unique_name_in_owner = true
 
 [node name="Drink" type="Action" parent="."]

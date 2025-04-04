@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bg0ppkuw8vol5" path="res://objects/Snack.gd" id="1_jyihl"]
 [ext_resource type="Texture2D" uid="uid://bc8w0vgrun35r" path="res://assets/snack.png" id="2_jtl2a"]
 
-[node name="Snack" type="Node2D"]
+[node name="Snack" type="Node2D" groups=["food"]]
 script = ExtResource("1_jyihl")
 
 [node name="Sprite" type="Sprite2D" parent="."]
@@ -15,7 +15,7 @@ advert = Dictionary[String, float]({
 "social": 0.12
 })
 spatial_weight = 1.4
-tags = Array[String](["-holding-snack"])
+tags = Array[String](["-holding-food"])
 unique_name_in_owner = true
 
 [node name="Chomp" type="Action" parent="."]

@@ -155,7 +155,8 @@ func start_next_task() -> void:
 		Task.GRAB:
 			if held:
 				drop_object()
-			grab_object(task[1])
+			if is_instance_valid(task[1]):
+				grab_object(task[1])
 		
 		Task.DROP:
 			if held:

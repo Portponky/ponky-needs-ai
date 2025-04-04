@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://gtny7m5txlb7" path="res://assets/coffee.png" id="1_5h4dr"]
 [ext_resource type="Script" uid="uid://dugc1a5awq56u" path="res://objects/Coffee.gd" id="1_5qsku"]
 
-[node name="Coffee" type="Node2D"]
+[node name="Coffee" type="Node2D" groups=["drink"]]
 script = ExtResource("1_5qsku")
 
 [node name="Sprite" type="Sprite2D" parent="."]
@@ -16,18 +16,18 @@ autostart = true
 
 [node name="PickUp" type="Action" parent="."]
 advert = Dictionary[String, float]({
-"social": 0.2,
-"thirst": 0.3
+"social": 0.08,
+"thirst": 0.25
 })
 active = false
 spatial_weight = 1.2
-tags = Array[String](["-holding-coffee", "-holding-water"])
+tags = Array[String](["-holding-drink", "-holding-food"])
 unique_name_in_owner = true
 
 [node name="Drink" type="Action" parent="."]
 advert = Dictionary[String, float]({
-"social": 0.2,
-"thirst": 0.3
+"social": 0.07,
+"thirst": 0.25
 })
 active = false
 unique_name_in_owner = true

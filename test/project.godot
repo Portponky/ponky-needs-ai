@@ -22,6 +22,11 @@ window/size/viewport_height=480
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 
+[global_group]
+
+food=""
+drink=""
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0

@@ -12,7 +12,7 @@ texture = ExtResource("1_p04hn")
 
 [node name="GetWater" type="Action" parent="."]
 advert = Dictionary[String, float]({
-"thirst": 0.4
+"thirst": 0.5
 })
-tags = Array[String](["-holding-water"])
+tags = Array[String](["-holding-drink", "-holding-food"])
 unique_name_in_owner = true

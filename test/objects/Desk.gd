@@ -11,6 +11,8 @@ func plan(person: Person, action: Action) -> void:
 		%DoWork.set_tags(tags)
 		
 		%DoWork.active = true
+		person.do_start_use(self)
+		person.do_stop_use(self)
 		person.do_reward(action.advert)
 	elif action == %DoWork:
 		person.do_start_use(self)
