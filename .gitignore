@@ -13,12 +13,12 @@ export_credentials.cfg
 src/*.os
 
 # qtcreator stuff
-godot-utility-ai.cflags
-godot-utility-ai.config
-godot-utility-ai.creator
-godot-utility-ai.creator.user
-godot-utility-ai.cxxflags
-godot-utility-ai.files
-godot-utility-ai.includes
+ponky-needs-ai.cflags
+ponky-needs-ai.config
+ponky-needs-ai.creator
+ponky-needs-ai.creator.user
+ponky-needs-ai.cxxflags
+ponky-needs-ai.files
+ponky-needs-ai.includes
 .qtc_clangd/
 

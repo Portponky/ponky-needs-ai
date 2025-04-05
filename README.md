@@ -1,2 +1,2 @@
-# godot-utility-ai
+# ponky-needs-ai
 Needs-based utility AI implemented with a gdextension server architecture
