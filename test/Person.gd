@@ -1,10 +1,10 @@
 class_name Person extends CharacterBody2D
 
-@export var full_name : String
-var workstation : Node2D
-var held : Node2D
-@onready var chat_indicator = $ChatIndicator
+const WALK_SPEED := 50.0
+const LOITER_SPEED := 15.0
+const USE_ATTEMPTS := 10
 
+# Tasks that a person can do
 enum Task {
 	THINKING, # waiting for a response from utility server
 	WAIT, # for a length of time
@@ -16,18 +16,32 @@ enum Task {
 	USE, # control exclusive access to something
 	LOITER, # move around at random
 	REWARD, # grant a specific advert
+	QUEUE_FREE, # disappear
 }
 
-var _current_task := Task.WAIT
+## Person's name, which is unique
+@export var full_name : String
 
-var _wait_left : float
+var desk : Node2D # Their desk
+var held : Node2D # The object they are carrying
 
-const WALK_SPEED := 50.0
-const LOITER_SPEED := 15.0
+# The smile indicator when talking
+@onready var chat_indicator = $ChatIndicator
+
+# What is the person doing
+var _current_task : int
+
+# General waiting
+var _wait_left : float # how long to wait before next task
+
+# Walking
 var _walk_direction : Vector2
 var _walk_speed := 0.0
 
-@onready var _task_queue := []
+# Trying to use something
+var _use_attempts := USE_ATTEMPTS
+
+var _task_queue := []
 var _stashed_task_queue := []
 
 func _ready() -> void:
@@ -42,13 +56,14 @@ func _ready() -> void:
 	%Agent.grant(noise)
 	
 	# Agents are tagged with the person's name for specific actions
-	# This assumes no workers have the same name, which is fine for this example
 	%Agent.tags.append(full_name)
 	
+	# Prevent the chat action from triggering with the agent
+	# e.g. can't chat to yourself
 	%Chat.tags = ["-" + full_name]
 	
 	# Wait for a little bit before doing something
-	do_wait(1.0, 2.0)
+	do_wait(0.5, 1.0)
 	start_next_task()
 
 
@@ -59,11 +74,8 @@ func do_wait(min_time: float, max_time: float) -> void:
 
 
 func do_walk_to(pos: Vector2) -> void:
+	# Walk to about 12 pixels away from a position
 	_task_queue.append([Task.WALK_TO, pos, 12.0])
-
-
-func do_reward(grant: Dictionary[String, float]) -> void:
-	_task_queue.append([Task.REWARD, grant])
 
 
 func do_gain(scene: String) -> void:
@@ -84,6 +96,7 @@ func do_drop() -> void:
 
 func do_start_use(object: Node2D) -> void:
 	_task_queue.append([Task.USE, object, true])
+	# When using an object, walk directly in front of it
 	_task_queue.append([Task.WALK_TO, object.global_position + Vector2(0.0, 8.0), 2.0])
 
 
@@ -95,21 +108,35 @@ func do_loiter(time: float) -> void:
 	_task_queue.append([Task.LOITER, time])
 
 
+func do_reward(grant: Dictionary[String, float]) -> void:
+	_task_queue.append([Task.REWARD, grant])
+
+
+func do_queue_free() -> void:
+	_task_queue.append([Task.QUEUE_FREE])
+
+
 func do_stash_tasks() -> void:
+	# If the person is doing something but needs to schedule some tasks beforehand
+	# stash the current tasks into another array to free up the task queue
 	_task_queue.append_array(_stashed_task_queue)
 	_stashed_task_queue = _task_queue
 	_task_queue = []
 
 
 func start_next_task() -> void:
+	# Make sure any stashed commands are appended to the task queue
 	_task_queue.append_array(_stashed_task_queue)
 	_stashed_task_queue.clear()
 	
+	%Chat.active = false
+	
+	# Nothing to do? Think of something
 	if _task_queue.is_empty():
 		if _current_task != Task.THINKING:
 			_current_task = Task.THINKING
 			var tags := []
-			if not workstation:
+			if not desk:
 				tags.append("unassigned")
 			if not held:
 				tags.append("empty-handed")
@@ -129,8 +156,6 @@ func start_next_task() -> void:
 			
 			%Agent.choose_action(150.0, 250.0, tags)
 		return
-	
-	%Chat.active = false
 	
 	var task = _task_queue.pop_front()
 	_current_task = task[0]
@@ -178,6 +203,12 @@ func start_next_task() -> void:
 			var being_used = obj.is_in_group("being-used")
 			
 			if being_used and use:
+				# this object is being used by someone else
+				_use_attempts -= 1
+				if _use_attempts == 0:
+					fail_task()
+					return
+				
 				do_stash_tasks()
 				do_loiter(0.8)
 				do_start_use(obj)
@@ -186,11 +217,32 @@ func start_next_task() -> void:
 					obj.add_to_group("being-used")
 				else:
 					obj.remove_from_group("being-used")
+				# reset attempts for next time
+				_use_attempts = USE_ATTEMPTS
 		
 		Task.LOITER:
+			# Let's loiter for a bit, and possibly chat
 			%Chat.active = true
 			_walk_direction = Vector2.RIGHT.rotated(randf() * TAU)
 			_wait_left = task[1]
+		
+		Task.QUEUE_FREE:
+			if desk:
+				desk.unassign()
+			queue_free()
+
+
+func fail_task() -> void:
+	# Can't complete the current task
+	# Either trying to walk to a destination that's unreachable
+	# or can't use an item because it's in use
+	_task_queue.clear()
+	_stashed_task_queue.clear()
+	
+	_use_attempts = USE_ATTEMPTS
+	
+	start_next_task()
+
 
 
 func _on_agent_action_chosen(action: Action) -> void:
@@ -209,12 +261,6 @@ func _on_agent_no_action_chosen() -> void:
 	# Not much work doing. Loiter for a bit.
 	do_loiter(5.0)
 	start_next_task()
-
-
-func pick_random_point_goal() -> void:
-	# This is a bit silly, for testing!
-	var maps := NavigationServer2D.get_maps()
-	%NavAgent.target_position = NavigationServer2D.map_get_random_point(maps.front(), 1, true)
 
 
 func drop_object() -> Node2D:
@@ -242,6 +288,9 @@ func grab_object(object: Node2D) -> void:
 
 
 func _process(delta: float) -> void:
+	if abs(_walk_direction.x) > 0.15:
+		%Sprite.flip_h = _walk_direction.x < 0.0
+	
 	if _current_task == Task.WALK_TO:
 		var offset : Vector2 = %NavAgent.get_next_path_position() - position
 		var ideal := offset.normalized()
@@ -261,18 +310,18 @@ func _process(delta: float) -> void:
 	
 		if %NavAgent.is_target_reached() or %NavAgent.is_navigation_finished():
 			start_next_task()
+		if not %NavAgent.is_target_reachable():
+			fail_task()
 	elif _current_task == Task.LOITER:
 		velocity = LOITER_SPEED * _walk_direction
 		if move_and_slide():
 			_walk_direction = Vector2.RIGHT.rotated(randf() * TAU)
 	
-	if _wait_left >= 0.0:
+	# if this is a task that times out, check the time out
+	if _current_task not in [Task.THINKING, Task.WALK_TO]:
 		_wait_left -= delta
 		if _wait_left < 0.0:
 			start_next_task()
-	
-	if abs(velocity.x) > 5.0:
-		%Sprite.flip_h = velocity.x < 0.0
 
 
 func get_need_values() -> Dictionary:

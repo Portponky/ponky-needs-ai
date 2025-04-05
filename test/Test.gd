@@ -44,23 +44,26 @@ func load_text_as_string_array(filename: String) -> Array[String]:
 	return result
 
 
-func generate_name() -> String:
+func create_person() -> Person:
 	var generated_name := ""
 	while generated_name.is_empty() or used_names.has(generated_name):
 		generated_name = "%s %s" % [forenames.pick_random(), surnames.pick_random()]
-	used_names[generated_name] = true
-	return generated_name
-
-
-func create_person() -> Person:
+	
 	var person = PERSON.instantiate()
-	person.full_name = generate_name()
+	person.full_name = generated_name
 	person.global_position = %Spawn.global_position
 	%Things.add_child(person)
+	
+	used_names[generated_name] = person
+	person.tree_exited.connect(func():
+		used_names.erase(generated_name)
+	)
 	return person
 
 
 func _process(_delta: float) -> void:
+	%Info.text = "%d people\n%.1f fps" % [used_names.size(), Engine.get_frames_per_second()]
+	
 	shape_query.transform = Transform2D.IDENTITY.translated(get_global_mouse_position())
 	var results = get_world_2d().direct_space_state.intersect_shape(shape_query, 1)
 	if results.is_empty():
@@ -88,3 +91,15 @@ func _process(_delta: float) -> void:
 func _on_add_person_pressed() -> void:
 	var person = create_person()
 	print("%s arrived" % person.full_name)
+
+
+func _on_remove_person_pressed() -> void:
+	if used_names.is_empty():
+		return
+	
+	var target = used_names.keys().pick_random()
+	var person : Person = used_names[target]
+	
+	# Let's remove this person
+	person.do_walk_to(%Despawn.global_position)
+	person.do_queue_free()
