@@ -116,7 +116,11 @@ void UtilityServer::think(const ThinkRequest& t)
             Ref<Need> need = ag->needs[e->value()];
             const float value = ag->values[e->value()];
             const float delta = UtilityFunctions::clampf(value + it.value, 0.0, 1.0);
-            score += need->get_attenuation_weight() * (need->get_response()->sample(delta) - need->get_response()->sample(value));
+            Ref<Curve> curve = need->get_response();
+            if (curve.is_valid())
+                score += need->get_attenuation_weight() * (curve->sample_baked(delta) - curve->sample_baked(value));
+            else
+                score += need->get_attenuation_weight() * (delta - value);
         }
         score *= dist_scale;
 
