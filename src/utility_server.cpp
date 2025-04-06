@@ -246,6 +246,25 @@ void UtilityServer::finish()
         memdelete(m_input_mutex);
 
     m_input_mutex = nullptr;
+
+    List<RID> agent_rids;
+    m_agents.get_owned_list(&agent_rids);
+    for (RID rid : agent_rids)
+    {
+        InternalAgent* agent = m_agents.get_or_null(rid);
+        m_agents.free(rid);
+        memdelete(agent);
+    }
+
+
+    List<RID> action_rids;
+    m_actions.get_owned_list(&action_rids);
+    for (RID rid : action_rids)
+    {
+        InternalAction* action = m_actions.get_or_null(rid);
+        m_actions.free(rid);
+        memdelete(action);
+    }
 }
 
 RID UtilityServer::create_agent()
