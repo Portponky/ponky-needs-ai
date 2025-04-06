@@ -227,27 +227,25 @@ Error UtilityServer::init()
 {
     m_exit_thread = false;
     m_input_mutex = memnew(Mutex);
-    m_thread = memnew(Thread);
-    m_thread->reference(); // Fudge: The thread seems to get unreffed an extra time whilst starting
+    m_thread.instantiate();
     m_thread->start(callable_mp(this, &UtilityServer::thread_func));
     return OK;
 }
 
 void UtilityServer::finish()
 {
-    if (!m_thread)
+    if (m_thread.is_null())
         return;
 
     m_exit_thread = true;
     m_thread->wait_to_finish();
 
-    memdelete(m_thread);
+    m_thread.unref();
 
     if (m_input_mutex)
         memdelete(m_input_mutex);
 
     m_input_mutex = nullptr;
-    m_thread = nullptr;
 }
 
 RID UtilityServer::create_agent()

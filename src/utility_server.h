@@ -54,7 +54,7 @@ class UtilityServer : public godot::Object
     };
 
     mutable bool m_exit_thread{false};
-    godot::Thread* m_thread{nullptr};
+    godot::Ref<godot::Thread> m_thread{nullptr};
 
     mutable godot::RID_PtrOwner<InternalAgent> m_agents;
     mutable godot::RID_PtrOwner<InternalAction> m_actions;
