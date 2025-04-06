@@ -6,11 +6,9 @@ func plan(person: Person, action: Action) -> void:
 		person.desk = self
 		action.active = false
 		
-		var tags = %DoWork.tags.duplicate()
-		tags.append(person.full_name)
-		%DoWork.set_tags(tags)
-		
+		%DoWork.set_tags(["empty-handed", person.full_name])
 		%DoWork.active = true
+		
 		person.do_start_use(self)
 		person.do_stop_use(self)
 		person.do_reward(action.advert)
@@ -23,3 +21,4 @@ func plan(person: Person, action: Action) -> void:
 
 func unassign() -> void:
 	%GetWorker.active = true
+	%DoWork.active = false

@@ -101,5 +101,5 @@ func _on_remove_person_pressed() -> void:
 	var person : Person = used_names[target]
 	
 	# Let's remove this person
-	person.do_walk_to(%Despawn.global_position)
+	person.do_walk_to(%Despawn)
 	person.do_queue_free()

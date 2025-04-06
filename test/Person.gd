@@ -73,9 +73,9 @@ func do_wait(min_time: float, max_time: float) -> void:
 	_task_queue.append([Task.WAIT, time])
 
 
-func do_walk_to(pos: Vector2) -> void:
+func do_walk_to(object: Node2D) -> void:
 	# Walk to about 12 pixels away from a position
-	_task_queue.append([Task.WALK_TO, pos, 12.0])
+	_task_queue.append([Task.WALK_TO, object.global_position, 12.0])
 
 
 func do_gain(scene: String) -> void:
@@ -337,7 +337,7 @@ func get_need_values() -> Dictionary:
 func plan(person: Person, action: Action) -> void:
 	if action == %Chat:
 		# someone's chatting with me!!
-		person.do_walk_to(global_position)
+		person.do_walk_to(self)
 		person.do_wait(3.0, 3.0)
 		person.do_reward(action.advert)
 		

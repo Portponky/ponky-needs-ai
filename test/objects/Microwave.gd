@@ -2,7 +2,7 @@ extends StaticBody2D
 
 
 func plan(person: Person, action: Action) -> void:
-	person.do_walk_to(global_position)
+	person.do_walk_to(self)
 	person.do_start_use(self)
 	person.do_destroy()
 	person.do_wait(3.0, 4.0)
