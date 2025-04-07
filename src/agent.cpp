@@ -82,6 +82,8 @@ void Agent::update_needs()
 
 void Agent::set_consideration_fraction(float fraction)
 {
+    ERR_FAIL_COND(fraction < 0.0f);
+    ERR_FAIL_COND(fraction > 1.0f);
     m_consideration_fraction = fraction;
     UtilityServer::get_singleton()->agent_set_consideration(m_rid, m_consideration_fraction, m_consideration_weight);
 }
@@ -93,6 +95,8 @@ float Agent::get_consideration_fraction() const
 
 void Agent::set_consideration_weight(float weight)
 {
+    ERR_FAIL_COND(weight < 0.0f);
+    ERR_FAIL_COND(weight > 1.0f);
     m_consideration_weight = weight;
     UtilityServer::get_singleton()->agent_set_consideration(m_rid, m_consideration_fraction, m_consideration_weight);
 }
@@ -131,6 +135,8 @@ float Agent::get_need_value(const godot::String& name) const
 
 void Agent::set_need_value(const godot::String& name, float value)
 {
+    ERR_FAIL_COND(value < 0.0f);
+    ERR_FAIL_COND(value > 1.0f);
     UtilityServer::get_singleton()->agent_set_need_score(m_rid, name, value);
 }
 
