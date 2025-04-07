@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="UtilityServer" inherits="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+        Server to calculate agents thinking.
+	</brief_description>
+	<description>
+        The UtilityServer handles the agent think function on a separate thread. When agents think, they are added to a queue, and then they think in order.
+        Only one agent can think per game frame. This prevents agents from choosing actions that get disabled by other agents on the same game frame.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="action_set_active">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="active" type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="action_set_advert">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="advert" type="Dictionary[String, float]" />
+			<description>
+			</description>
+		</method>
+		<method name="action_set_object_id">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="instance_id" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="action_set_spatial_weight">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="spatial_weight" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="action_set_tags">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="tags" type="String[]" />
+			<description>
+			</description>
+		</method>
+		<method name="agent_choose_action">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="position" type="Vector2" />
+			<param index="2" name="near_distance" type="float" />
+			<param index="3" name="far_distance" type="float" />
+			<param index="4" name="tags" type="String[]" />
+			<description>
+			</description>
+		</method>
+		<method name="agent_get_need_score">
+			<return type="float" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="need" type="String" />
+			<description>
+			</description>
+		</method>
+		<method name="agent_get_needs" qualifiers="const">
+			<return type="Need[]" />
+			<param index="0" name="rid" type="RID" />
+			<description>
+			</description>
+		</method>
+		<method name="agent_grant">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="reward" type="int" />
+			<description>
+			</description>
+		</method>
+		<method name="agent_set_action_callback">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="callback" type="Callable" />
+			<description>
+			</description>
+		</method>
+		<method name="agent_set_consideration">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="fraction" type="float" />
+			<param index="2" name="weight" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="agent_set_decaying">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="decaying" type="bool" />
+			<description>
+			</description>
+		</method>
+		<method name="agent_set_need_score">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="need" type="String" />
+			<param index="2" name="value" type="float" />
+			<description>
+			</description>
+		</method>
+		<method name="agent_set_needs">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="needs" type="Need[]" />
+			<description>
+			</description>
+		</method>
+		<method name="agent_set_no_action_callback">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<param index="1" name="callback" type="Callable" />
+			<description>
+			</description>
+		</method>
+		<method name="create_action">
+			<return type="RID" />
+			<description>
+			</description>
+		</method>
+		<method name="create_agent">
+			<return type="RID" />
+			<description>
+			</description>
+		</method>
+		<method name="free_rid">
+			<return type="void" />
+			<param index="0" name="rid" type="RID" />
+			<description>
+			</description>
+		</method>
+	</methods>
+</class>

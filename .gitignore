@@ -11,6 +11,7 @@ export_credentials.cfg
 
 .sconsign.dblite
 src/*.os
+src/gen/*
 
 # qtcreator stuff
 ponky-needs-ai.cflags

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="Agent" inherits="Node2D" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+        An agent that can choose actions.
+	</brief_description>
+	<description>
+        Agents have a number of [Need]s which they wants to fulfil. When the [member think] function is called, an agent will choose one of the best actions for fulfilling its needs.
+        The way agents choose actions is based on various things. The agent's needs, the agent's tags, the distances they are searching, and their consideration weights. An agent will rank every action which fits withing these criteria and choose one with random weighting. This means that agents are not always totally predictable.
+        An agent's needs can decay over time, as specified by the [member Need.decay_time]. This means that as time passes, what the agent wants may change naturally.
+        </description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="choose_action">
+			<return type="void" />
+			<param index="0" name="near_distance" type="float" />
+			<param index="1" name="far_distance" type="float" />
+			<param index="2" name="tags" type="String[]" default="[]" />
+			<description>
+                        This function causes the agent to think, and either emit [signal action_chosen] or [signal no_action_chosen]. This is handled internally by the [UtilityServer], so there will be at least a frame delay (possibly more) before the agent makes a decision.
+                        The [b]near_distance[/b] and [b]far_distance[/b] are the pixel distance for which the agent will consider actions. Anything that is within the near distance is unweighted. Anything beyond the far distance is rejected. Actions between the near and far distances are weighted linearly. Note that [member Action.spatial_weight] will affect this weighting.
+                        The [b]tags[/b] are an array of tags that are used for this think only. For example, this might contain what area the agent is in, what objects they are carrying, or other changing attributes.
+			</description>
+		</method>
+		<method name="get_need_value" qualifiers="const">
+			<return type="float" />
+			<param index="0" name="name" type="String" />
+			<description>
+                        Returns the current value for the given need from the [UtilityServer]. This will be a value between 0.0 and 1.0.
+			</description>
+		</method>
+		<method name="grant">
+			<return type="void" />
+			<param index="0" name="reward" type="Dictionary[String, float]" />
+			<description>
+                        Adjusts the agent's needs in the [UtilityServer] by adding the given values. Any needs which the agent doesn't have are ignored.
+                        This is typically used to grant an [member Action.advert] after the action is completed.
+			</description>
+		</method>
+		<method name="set_need_value">
+			<return type="void" />
+			<param index="0" name="name" type="String" />
+			<param index="1" name="value" type="float" />
+			<description>
+                        Sets the value for the need to the desired value. If you want to add or subtract a value from the need, use [member grant] instead.
+			</description>
+		</method>
+		<method name="update_needs">
+			<return type="void" />
+			<description>
+                        Helper function to update the [member needs] in the [UtilityServer] once they have been changed in code. Note that because the needs are stored in an [Array], which is reference type, altering the needs in code will not automatically update the UtilityServer.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="consideration_fraction" type="float" setter="set_consideration_fraction" getter="get_consideration_fraction" default="0.9">
+                The fraction of the best action that is considered. By default, agents will consider actions that are 90% as good as the best action available. If this is set to 1.0, then the agent will always choose the best action available.
+		</member>
+		<member name="consideration_weight" type="float" setter="set_consideration_weight" getter="get_consideration_weight" default="0.5">
+                The weighting for actions that are worse than the best available action. This weighting is applied linearly. If this is set to 1.0 then the agent will choose equally from all actions that are withing its consideration fraction. If this is set to 0.0, it is strongly biased towards the best action.
+		</member>
+		<member name="decaying" type="bool" setter="set_decaying" getter="get_decaying" default="true">
+                This controls whether an agent's needs are decaying. If the agent is in the scene tree, but is disabled or inactive for some reason (either for in-project reasons, such as they are asleep, or for technical reasons, such as they are hidden and unused right now), you can prevent their needs from decaying to preserve their state.
+		</member>
+		<member name="needs" type="Need[]" setter="set_needs" getter="get_needs" default="[]">
+                The agent's [Need]s. These control how the agent thinks. The needs are matched via string name, so two agents can have the same need with different properties.
+                [b]Warning[/b]: The needs are a [Array] property, which is a reference type. Altering the array in place will not update the [UtilityServer]. If you change the needs, either do it by calling [code]set_needs[/code], or call [member update_needs] after changing it.
+		</member>
+		<member name="tags" type="String[]" setter="set_tags" getter="get_tags" default="[]">
+                Tags which the agent uses when thinking. These are intended for tags that don't change much, like an agent's name or identifier, their job, blood type, or other fixed details which should be included in every call to [member think]. You can also pass tags dynamically when the think function is called.
+		</member>
+	</members>
+	<signals>
+		<signal name="action_chosen">
+			<param index="0" name="action" type="Action" />
+			<description>
+                        After an agent thinks, this signal is emitted with the action that the agent has chosen.
+			</description>
+		</signal>
+		<signal name="no_action_chosen">
+			<description>
+                        After an agent thinks, this signal is emitted when there are no good actions to choose. An agent won't choose an action that negatively affects them, so this is emitted when there are no valid actions (due to tags or distance) or all valid actions affect the agent negatively.
+			</description>
+		</signal>
+	</signals>
+</class>
