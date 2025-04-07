@@ -56,9 +56,11 @@ void Agent::_notification(int what)
     switch (what)
     {
     case NOTIFICATION_ENTER_TREE:
+    case NOTIFICATION_UNPAUSED:
         UtilityServer::get_singleton()->agent_set_decaying(m_rid, m_decaying);
         break;
     case NOTIFICATION_EXIT_TREE:
+    case NOTIFICATION_PAUSED:
         UtilityServer::get_singleton()->agent_set_decaying(m_rid, false);
         break;
     }

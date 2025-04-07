@@ -103,3 +103,7 @@ func _on_remove_person_pressed() -> void:
 	# Let's remove this person
 	person.do_walk_to(%Despawn)
 	person.do_queue_free()
+
+
+func _on_pause_toggled(pause: bool) -> void:
+	get_tree().paused = pause

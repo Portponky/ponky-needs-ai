@@ -385,9 +385,13 @@ void UtilityServer::agent_set_consideration(RID agent, float fraction, float wei
 
 void UtilityServer::agent_set_decaying(godot::RID agent, bool decaying)
 {
-    InternalAgent* a = get_agent_with_decays(agent);
+    InternalAgent* a = m_agents.get_or_null(agent);
     ERR_FAIL_NULL(a);
 
+    if (a->decaying == decaying)
+        return;
+
+    a = get_agent_with_decays(agent);
     a->decaying = decaying;
     a->last_decay_tick = Time::get_singleton()->get_ticks_msec();
 }
