@@ -8,6 +8,7 @@ void Action::_bind_methods()
 {
     ClassDB::bind_method(D_METHOD("set_advert", "advert"), &Action::set_advert);
     ClassDB::bind_method(D_METHOD("get_advert"), &Action::get_advert);
+    ClassDB::bind_method(D_METHOD("update_advert"), &Action::update_advert);
 
     ADD_PROPERTY(
         PropertyInfo(
@@ -32,6 +33,8 @@ void Action::_bind_methods()
 
     ClassDB::bind_method(D_METHOD("set_tags", "tags"), &Action::set_tags);
     ClassDB::bind_method(D_METHOD("get_tags"), &Action::get_tags);
+    ClassDB::bind_method(D_METHOD("add_tag", "tag"), &Action::add_tag);
+    ClassDB::bind_method(D_METHOD("remove_tag", "tag"), &Action::remove_tag);
 
     ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "tags", PROPERTY_HINT_TYPE_STRING, String::num(Variant::STRING) + ":"), "set_tags", "get_tags");
 }
@@ -61,6 +64,11 @@ void Action::set_advert(const godot::TypedDictionary<godot::String, float>& adve
 godot::TypedDictionary<godot::String, float> Action::get_advert() const
 {
     return m_advert;
+}
+
+void Action::update_advert()
+{
+    UtilityServer::get_singleton()->action_set_advert(m_rid, m_advert);
 }
 
 void Action::set_active(bool active)
@@ -95,6 +103,22 @@ void Action::set_tags(const godot::TypedArray<godot::String>& tags)
 godot::TypedArray<godot::String> Action::get_tags() const
 {
     return m_tags;
+}
+
+void Action::add_tag(const godot::String& tag)
+{
+    if (m_tags.has(tag))
+        return;
+    m_tags.append(tag);
+    UtilityServer::get_singleton()->action_set_tags(m_rid, m_tags);
+}
+
+void Action::remove_tag(const godot::String& tag)
+{
+    if (!m_tags.has(tag))
+        return;
+    m_tags.erase(tag);
+    UtilityServer::get_singleton()->action_set_tags(m_rid, m_tags);
 }
 
 Action::Action()

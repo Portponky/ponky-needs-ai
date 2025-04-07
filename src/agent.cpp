@@ -9,6 +9,7 @@ void Agent::_bind_methods()
 {
     ClassDB::bind_method(D_METHOD("set_needs", "needs"), &Agent::set_needs);
     ClassDB::bind_method(D_METHOD("get_needs"), &Agent::get_needs);
+    ClassDB::bind_method(D_METHOD("update_needs"), &Agent::update_needs);
 
     ADD_PROPERTY(
         PropertyInfo(
@@ -66,12 +67,17 @@ void Agent::_notification(int what)
 void Agent::set_needs(const TypedArray<Need>& needs)
 {
     m_needs = needs;
-    UtilityServer::get_singleton()->agent_set_needs(m_rid, needs);
+    UtilityServer::get_singleton()->agent_set_needs(m_rid, m_needs);
 }
 
 TypedArray<Need> Agent::get_needs() const
 {
     return m_needs;
+}
+
+void Agent::update_needs()
+{
+    UtilityServer::get_singleton()->agent_set_needs(m_rid, m_needs);
 }
 
 void Agent::set_consideration_fraction(float fraction)

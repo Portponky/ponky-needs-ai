@@ -22,6 +22,7 @@ protected:
 public:
     void set_advert(const godot::TypedDictionary<godot::String, float>& advert);
     godot::TypedDictionary<godot::String, float> get_advert() const;
+    void update_advert();
 
     void set_active(bool active);
     bool get_active() const;
@@ -31,6 +32,8 @@ public:
 
     void set_tags(const godot::TypedArray<godot::String>& tags);
     godot::TypedArray<godot::String> get_tags() const;
+    void add_tag(const godot::String& tag);
+    void remove_tag(const godot::String& tag);
 
     Action();
     ~Action();

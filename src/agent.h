@@ -24,6 +24,7 @@ protected:
 public:
     void set_needs(const godot::TypedArray<Need>& needs);
     godot::TypedArray<Need> get_needs() const;
+    void update_needs();
 
     void set_consideration_fraction(float fraction);
     float get_consideration_fraction() const;
