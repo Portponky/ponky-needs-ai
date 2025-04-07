@@ -4,6 +4,8 @@
 #include <godot_cpp/classes/os.hpp>
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/variant/callable.hpp>
+#include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/main_loop.hpp>
 
 using namespace godot;
 
@@ -11,10 +13,10 @@ UtilityServer* UtilityServer::s_singleton{nullptr};
 
 void UtilityServer::thread_func()
 {
-    uint64_t sleep_delay_ms = 20;
-
     while (!m_exit_thread)
     {
+        m_work_semaphore->wait();
+
         purge_free_queue();
 
         bool pending_think{false};
@@ -31,8 +33,6 @@ void UtilityServer::thread_func()
 
         if (pending_think)
             think(next);
-
-        OS::get_singleton()->delay_usec(sleep_delay_ms * 1000);
     }
 }
 
@@ -231,8 +231,10 @@ Error UtilityServer::init()
 {
     m_exit_thread = false;
     m_input_mutex = memnew(Mutex);
+    m_work_semaphore = memnew(Semaphore);
     m_thread.instantiate();
     m_thread->start(callable_mp(this, &UtilityServer::thread_func));
+
     return OK;
 }
 
@@ -242,14 +244,18 @@ void UtilityServer::finish()
         return;
 
     m_exit_thread = true;
+    m_work_semaphore->post();
     m_thread->wait_to_finish();
 
     m_thread.unref();
 
     if (m_input_mutex)
         memdelete(m_input_mutex);
-
     m_input_mutex = nullptr;
+
+    if (m_work_semaphore)
+        memdelete(m_work_semaphore);
+    m_work_semaphore = nullptr;
 
     List<RID> agent_rids;
     m_agents.get_owned_list(&agent_rids);
@@ -273,6 +279,12 @@ void UtilityServer::finish()
 
 RID UtilityServer::create_agent()
 {
+    if (!m_initialized_process_callback)
+    {
+        m_initialized_process_callback = true;
+        Engine::get_singleton()->get_main_loop()->connect("process_frame", callable_mp(this, &UtilityServer::step));
+    }
+
     InternalAgent* agent = memnew(InternalAgent);
     RID rid = m_agents.make_rid(agent);
     return rid;
@@ -483,6 +495,14 @@ void UtilityServer::agent_grant(godot::RID agent, const godot::TypedDictionary<g
             a->values.write[e->value()] = UtilityFunctions::clampf(a->values[e->value()] + diff, 0.0f, 1.0f);
         }
     }
+}
+
+void UtilityServer::step()
+{
+    m_work_semaphore->post(); // cause thread to iterate once
+
+    // report times, etc.
+    // something like if (EditorDebugger::get_singleton()->is_profiling())
 }
 
 UtilityServer::UtilityServer()

@@ -3,6 +3,7 @@
 #include <godot_cpp/classes/object.hpp>
 #include <godot_cpp/classes/thread.hpp>
 #include <godot_cpp/classes/mutex.hpp>
+#include <godot_cpp/classes/semaphore.hpp>
 
 #include <godot_cpp/templates/rid_owner.hpp>
 #include <godot_cpp/templates/rb_map.hpp>
@@ -60,8 +61,11 @@ class UtilityServer : public godot::Object
     mutable godot::RID_PtrOwner<InternalAction> m_actions;
 
     godot::Mutex* m_input_mutex{nullptr};
+    godot::Semaphore* m_work_semaphore{nullptr};
     godot::Vector<ThinkRequest> m_requests;
     godot::Vector<godot::RID> m_free_queue;
+
+    bool m_initialized_process_callback{false};
 
     static UtilityServer* s_singleton;
     void thread_func();
@@ -106,6 +110,8 @@ public:
     // Use
     void agent_choose_action(godot::RID agent, godot::Vector2 position, float near_distance, float far_distance, const godot::TypedArray<godot::String>& tags);
     void agent_grant(godot::RID agent, const godot::TypedDictionary<godot::String, float>& reward);
+
+    void step();
 
     UtilityServer();
     ~UtilityServer();
