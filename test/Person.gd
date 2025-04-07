@@ -3,6 +3,7 @@ class_name Person extends CharacterBody2D
 const WALK_SPEED := 50.0
 const LOITER_SPEED := 15.0
 const USE_ATTEMPTS := 10
+const USAGE_GROUP := "being-used"
 
 # Tasks that a person can do
 enum Task {
@@ -24,6 +25,7 @@ enum Task {
 
 var desk : Node2D # Their desk
 var held : Node2D # The object they are carrying
+var used_object : Node2D # the object they are using
 
 # The smile indicator when talking
 @onready var chat_indicator = $ChatIndicator
@@ -200,23 +202,36 @@ func start_next_task() -> void:
 		Task.USE:
 			var obj : Node2D = task[1]
 			var use : bool = task[2]
-			var being_used = obj.is_in_group("being-used")
+			var being_used = obj.is_in_group(USAGE_GROUP)
 			
-			if being_used and use:
-				# this object is being used by someone else
-				_use_attempts -= 1
-				if _use_attempts == 0:
-					fail_task()
-					return
+			if use:
+				if used_object and used_object != obj:
+					# we're already using something else!
+					print("%s attempted to use two things" % full_name)
+					used_object.remove_from_group(USAGE_GROUP)
+					used_object = null
 				
-				do_stash_tasks()
-				do_loiter(0.8)
-				do_start_use(obj)
+				# we want to start using this object
+				if being_used and obj != used_object: # someone else is using it
+					_use_attempts -= 1
+					if _use_attempts == 0:
+						fail_task()
+						return
+					
+					do_stash_tasks()
+					do_loiter(0.8)
+					do_start_use(obj)
+				elif !being_used:
+					obj.add_to_group(USAGE_GROUP)
+					used_object = obj
 			else:
-				if use:
-					obj.add_to_group("being-used")
-				else:
-					obj.remove_from_group("being-used")
+				# we want to stop using this object
+				if used_object != obj:
+					print("%s attempted to stop using the wrong object" % full_name)
+				
+				obj.remove_from_group(USAGE_GROUP)
+				used_object = null
+				
 				# reset attempts for next time
 				_use_attempts = USE_ATTEMPTS
 		
@@ -229,6 +244,8 @@ func start_next_task() -> void:
 		Task.QUEUE_FREE:
 			if desk:
 				desk.unassign()
+			if used_object:
+				used_object.remove_from_group(USAGE_GROUP)
 			queue_free()
 
 
