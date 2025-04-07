@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="Action" inherits="Node2D" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		An action that can be chosen by an agent.
+        An action that can be chosen by an agent.
 	</brief_description>
 	<description>
-		An action represent something that an agent can choose to do. The action will advertise what [Need]s it fulfils (or acts as a detriment towards), and the agent will choose one of the actions that best suits its current needs. The action itself doesn't provide any form of response or programming behaviour to the agent, it merely exists as a node that can be chosen. How the agent behaves after choosing an action has to be implemented by the project.
-                Actions can have tags to filter which agents can choose them. There are two ways this can be done.
-                Firstly, any standard text tag (such as [code]security-clearance[/code]) will only allow agents who have the same tag(s). This applies to all tags, so if an action has tags [code]zookeeper[/code] and [code]reptile-handler[/code] then an agent who only has the tags [code]zookeeper[/code] would not choose this action.
-                Secondly, any tag which starts with [code]![/code] or [code]-[/code] will block agents who have that tag. For example, and action with tag [code]!on-duty[/code] will prevent any agents that have the tag [code]on-duty[/code] from choosing it.
-                Actions can also be disabled and control how they are rank by distance.
+        An action represent something that an agent can choose to do. The action will advertise what [Need]s it fulfils (or acts as a detriment towards), and the agent will choose one of the actions that best suits its current needs. The action itself doesn't provide any form of response or programming behaviour to the agent, it merely exists as a node that can be chosen. How the agent behaves after choosing an action has to be implemented by the project.
+        Actions can have tags to filter which agents can choose them. There are two ways this can be done.
+        Firstly, any standard text tag (such as [code]security-clearance[/code]) will only allow agents who have the same tag(s). This applies to all tags, so if an action has tags [code]zookeeper[/code] and [code]reptile-handler[/code] then an agent who only has the tags [code]zookeeper[/code] would not choose this action.
+        Secondly, any tag which starts with [code]![/code] or [code]-[/code] will block agents who have that tag. For example, and action with tag [code]!on-duty[/code] will prevent any agents that have the tag [code]on-duty[/code] from choosing it.
+        Actions can also be disabled and control how they are rank by distance.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -17,43 +17,43 @@
 			<return type="void" />
 			<param index="0" name="tag" type="String" />
 			<description>
-				Helper function to add a tag to the tags (if not present) and update the [UtilityServer]. Note that because the tags are an [Array], which is a reference type, calling [code]my_action.tags.append("my-new-tag")[/code] will not update the UtilityServer.
+                        Helper function to add a tag to the tags (if not present) and update the [UtilityServer]. Note that because the tags are an [Array], which is a reference type, calling [code]my_action.tags.append("my-new-tag")[/code] will not update the UtilityServer.
 			</description>
 		</method>
 		<method name="remove_tag">
 			<return type="void" />
 			<param index="0" name="tag" type="String" />
 			<description>
-				Helper function to remove a tag from the tags (if present) and update the [UtilityServer]. Note that because the tags are an [Array], which is a reference type, calling [code]my_action.tags.erase("my-old-tag")[/code] will not update the UtilityServer.
+                        Helper function to remove a tag from the tags (if present) and update the [UtilityServer]. Note that because the tags are an [Array], which is a reference type, calling [code]my_action.tags.erase("my-old-tag")[/code] will not update the UtilityServer.
 			</description>
 		</method>
 		<method name="update_advert">
 			<return type="void" />
 			<description>
-				Helper function to update the [UtilityServer] once the advert has been changed in code. Note that because the tags are a [Dictionary], which is a reference type, calling [code]my_action.advert["hunger"] = 0.2[/code] will not update the UtilityServer.
+                        Helper function to update the [UtilityServer] once the advert has been changed in code. Note that because the tags are a [Dictionary], which is a reference type, calling [code]my_action.advert["hunger"] = 0.2[/code] will not update the UtilityServer.
 			</description>
 		</method>
 	</methods>
 	<members>
 		<member name="active" type="bool" setter="set_active" getter="get_active" default="true">
-			Controls if the action can be chosen at the moment. If disabled as a response to an agent choosing it, no other agent will choose it even if they are currently thinking.
+                Controls if the action can be chosen at the moment. If disabled as a response to an agent choosing it, no other agent will choose it even if they are currently thinking.
 		</member>
 		<member name="advert" type="Dictionary[String, float]" setter="set_advert" getter="get_advert" default="{}">
-			Shows how needs are affected by choosing this action.
-                        Note that choosing this action doesn't actually affect the agent. so you probably want to do something like [code]my_agent.grant(chosen_action.advert)[/code] once the action is completed. See [member Agent.grant]. However, you are not required to adhere to granting what the action advertises - it is very powerful (and dangerous) to grant a different result to the agent. If you don't adjust the agent in response to the action, the agent will likely keep choosing the same action again and again.
-                        [b]Warning[/b]: advert is a [Dictionary] property, which is a reference type. Altering the dictionary in place will not update the [UtilityServer]. If you change the advert, either do it by calling [code]set_advert[/code], or call [member update_advert] after changing it.
+                Shows how needs are affected by choosing this action.
+                Note that choosing this action doesn't actually affect the agent. so you probably want to do something like [code]my_agent.grant(chosen_action.advert)[/code] once the action is completed. See [member Agent.grant]. However, you are not required to adhere to granting what the action advertises - it is very powerful (and dangerous) to grant a different result to the agent. If you don't adjust the agent in response to the action, the agent will likely keep choosing the same action again and again.
+                [b]Warning[/b]: advert is a [Dictionary] property, which is a reference type. Altering the dictionary in place will not update the [UtilityServer]. If you change the advert, either do it by calling [code]set_advert[/code], or call [member update_advert] after changing it.
 		</member>
 		<member name="spatial_weight" type="float" setter="set_spatial_weight" getter="get_spatial_weight" default="1.0">
-			This controls how the action is weighted by the agent's thinking distance. Specifically, the distance from the agent is multiplied by this weight before being scored.
-                        A spatial weight of 1.0 has no effect.
-                        A spatial weight of 0.0 means the action has no spatial component at all, and is equally valuable when done from anywhere.
-                        A spatial weight of 0.5 doubles the distance that an agent will consider the action from. This might be good for actions that are important, and the agent would consider travelling further for.
-                        Spatial weights of more than 1.0 give a penalty to the distance an agent will consider them from. A value of 2.0 would mean an agent only considers it if it's much closer. Something flashy or exciting, like an advertisement or an unexpected event might work this way.
+                This controls how the action is weighted by the agent's thinking distance. Specifically, the distance from the agent is multiplied by this weight before being scored.
+                A spatial weight of 1.0 has no effect.
+                A spatial weight of 0.0 means the action has no spatial component at all, and is equally valuable when done from anywhere.
+                A spatial weight of 0.5 doubles the distance that an agent will consider the action from. This might be good for actions that are important, and the agent would consider travelling further for.
+                Spatial weights of more than 1.0 give a penalty to the distance an agent will consider them from. A value of 2.0 would mean an agent only considers it if it's much closer. Something flashy or exciting, like an advertisement or an unexpected event might work this way.
 		</member>
 		<member name="tags" type="String[]" setter="set_tags" getter="get_tags" default="[]">
-			The tags to filter agent choice with. All tags here must be present in the agent, apart from tags beginning with [code]![/code] or [code]-[/code] which must be absent.
-                        For example, the tags [code]["electrician", "wearing-hard-hat", "-beard"][/code] will only apply to agents who are tagged as both electricians and wearing hard hats, but exclude agents who are tagged with beard.
-                        [b]Warning[/b]: tags are an [Array] property, which is a reference type. Altering the array in place will not update the [UtilityServer]. Either update the tags by calling [code]set_tags[/code] or use the helper functions [method add_tag] or [method remove_tag].
+                The tags to filter agent choice with. All tags here must be present in the agent, apart from tags beginning with [code]![/code] or [code]-[/code] which must be absent.
+                For example, the tags [code]["electrician", "wearing-hard-hat", "-beard"][/code] will only apply to agents who are tagged as both electricians and wearing hard hats, but exclude agents who are tagged with beard.
+                [b]Warning[/b]: tags are an [Array] property, which is a reference type. Altering the array in place will not update the [UtilityServer]. Either update the tags by calling [code]set_tags[/code] or use the helper functions [method add_tag] or [method remove_tag].
 		</member>
 	</members>
 </class>

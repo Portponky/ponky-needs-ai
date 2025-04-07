@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="UtilityServer" inherits="Object" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		Server to calculate agents thinking.
+        Server to calculate agents thinking.
 	</brief_description>
 	<description>
-		The UtilityServer handles the agent think function on a separate thread. When agents think, they are added to a queue, and then they think in order.
-                Only one agent can think per game frame. This prevents agents from choosing actions that get disabled by other agents on the same game frame.
+        The UtilityServer handles the agent think function on a separate thread. When agents think, they are added to a queue, and then they think in order.
+        Only one agent can think per game frame. This prevents agents from choosing actions that get disabled by other agents on the same game frame.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -15,7 +15,7 @@
 			<param index="0" name="rid" type="RID" />
 			<param index="1" name="active" type="bool" />
 			<description>
-				Changes whether the action specified by rid is active for agents to select.
+                        Changes whether the action specified by rid is active for agents to select.
 			</description>
 		</method>
 		<method name="action_set_advert">
@@ -23,7 +23,7 @@
 			<param index="0" name="rid" type="RID" />
 			<param index="1" name="advert" type="Dictionary[String, float]" />
 			<description>
-				Sets the advert values for the action specified by rid.
+                        Sets the advert values for the action specified by rid.
 			</description>
 		</method>
 		<method name="action_set_object_id">
@@ -31,7 +31,7 @@
 			<param index="0" name="rid" type="RID" />
 			<param index="1" name="instance_id" type="int" />
 			<description>
-				Sets the instance id of the action node which is selected when an agent chooses this action.
+                        Sets the instance id of the action node which is selected when an agent chooses this action.
 			</description>
 		</method>
 		<method name="action_set_position">
@@ -39,7 +39,7 @@
 			<param index="0" name="rid" type="RID" />
 			<param index="1" name="position" type="Vector2" />
 			<description>
-				Set the global position of the action specified by rid.
+                        Set the global position of the action specified by rid.
 			</description>
 		</method>
 		<method name="action_set_spatial_weight">
@@ -47,7 +47,7 @@
 			<param index="0" name="rid" type="RID" />
 			<param index="1" name="spatial_weight" type="float" />
 			<description>
-				Sets the spatial weighting for the action specified by rid.
+                        Sets the spatial weighting for the action specified by rid.
 			</description>
 		</method>
 		<method name="action_set_tags">
@@ -55,7 +55,7 @@
 			<param index="0" name="rid" type="RID" />
 			<param index="1" name="tags" type="String[]" />
 			<description>
-				Sets the tags for the action specified by rid.
+                        Sets the tags for the action specified by rid.
 			</description>
 		</method>
 		<method name="agent_choose_action">
@@ -66,7 +66,7 @@
 			<param index="3" name="far_distance" type="float" />
 			<param index="4" name="tags" type="String[]" />
 			<description>
-				Adds an agent to the think queue. The position should be its global position.
+                        Adds an agent to the think queue. The position should be its global position.
 			</description>
 		</method>
 		<method name="agent_get_need_score">
@@ -74,14 +74,14 @@
 			<param index="0" name="rid" type="RID" />
 			<param index="1" name="need" type="String" />
 			<description>
-				Gets the need score for the need name for the agent specified by rid. Need scores which decay are evaluated lazily, and there is a 100ms window where it will not be reevaluated.
+                        Gets the need score for the need name for the agent specified by rid. Need scores which decay are evaluated lazily, and there is a 100ms window where it will not be reevaluated.
 			</description>
 		</method>
 		<method name="agent_get_needs" qualifiers="const">
 			<return type="Need[]" />
 			<param index="0" name="rid" type="RID" />
 			<description>
-				Gets the needs for the agent specified by rid.
+                        Gets the needs for the agent specified by rid.
 			</description>
 		</method>
 		<method name="agent_grant">
@@ -89,7 +89,7 @@
 			<param index="0" name="rid" type="RID" />
 			<param index="1" name="reward" type="Dictionary[String, float]" />
 			<description>
-				Alter the agent's need values by the need-score values. Needs that are not present will be ignored silently.
+                        Alter the agent's need values by the need-score values. Needs that are not present will be ignored silently.
 			</description>
 		</method>
 		<method name="agent_set_action_callback">
@@ -97,7 +97,7 @@
 			<param index="0" name="rid" type="RID" />
 			<param index="1" name="callback" type="Callable" />
 			<description>
-				Set the callback which should be called when an action is selected by an agent. The callback should take an action node as a parameter.
+                        Set the callback which should be called when an action is selected by an agent. The callback should take an action node as a parameter.
 			</description>
 		</method>
 		<method name="agent_set_consideration">
@@ -106,7 +106,7 @@
 			<param index="1" name="fraction" type="float" />
 			<param index="2" name="weight" type="float" />
 			<description>
-				Set the agent's consideration fraction and weight.
+                        Set the agent's consideration fraction and weight.
 			</description>
 		</method>
 		<method name="agent_set_decaying">
@@ -114,7 +114,7 @@
 			<param index="0" name="rid" type="RID" />
 			<param index="1" name="decaying" type="bool" />
 			<description>
-				Sets whether the agent's needs which decay are decaying or not.
+                        Sets whether the agent's needs which decay are decaying or not.
 			</description>
 		</method>
 		<method name="agent_set_need_score">
@@ -123,7 +123,7 @@
 			<param index="1" name="need" type="String" />
 			<param index="2" name="value" type="float" />
 			<description>
-				Force a value onto a need for an agent specified by rid.
+                        Force a value onto a need for an agent specified by rid.
 			</description>
 		</method>
 		<method name="agent_set_needs">
@@ -131,7 +131,7 @@
 			<param index="0" name="rid" type="RID" />
 			<param index="1" name="needs" type="Need[]" />
 			<description>
-				Sets the needs that the agent has. This will preserve need values for needs which are retained.
+                        Sets the needs that the agent has. This will preserve need values for needs which are retained.
 			</description>
 		</method>
 		<method name="agent_set_no_action_callback">
@@ -139,26 +139,26 @@
 			<param index="0" name="rid" type="RID" />
 			<param index="1" name="callback" type="Callable" />
 			<description>
-				Set the callback which should be called when an agent can't find an appropriate action.
+                        Set the callback which should be called when an agent can't find an appropriate action.
 			</description>
 		</method>
 		<method name="create_action">
 			<return type="RID" />
 			<description>
-				Make an action.
+                        Make an action.
 			</description>
 		</method>
 		<method name="create_agent">
 			<return type="RID" />
 			<description>
-                                Make an agent. Also initializes the worker thread when the first agent is created.
+                        Make an agent. Also initializes the worker thread when the first agent is created.
 			</description>
 		</method>
 		<method name="free_rid">
 			<return type="void" />
 			<param index="0" name="rid" type="RID" />
 			<description>
-				Delete an action or agent for the given rid.
+                        Delete an action or agent for the given rid.
 			</description>
 		</method>
 	</methods>
