@@ -467,7 +467,7 @@ void UtilityServer::action_set_tags(godot::RID action, const godot::TypedArray<g
     for (int n = 0; n < tags.size(); ++n)
     {
         godot::String tag = tags[n];
-        if (tag .begins_with("-"))
+        if (tag.begins_with("-") || tag.begins_with("!"))
             a->tags_no.push_back(tag.right(-1));
         else
             a->tags_yes.push_back(tag);
