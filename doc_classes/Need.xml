@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="Need" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-        A need that an agent wants to fulfil.
+		A need that an agent wants to fulfil.
 	</brief_description>
 	<description>
-        Agents have a set of needs that control how they think. These needs are described as a floating point value between 0.0 and 1.0. In general, a value of 1.0 is the best, where the need is totally fulfilled, and 0.0 is the worst state where the need is very severe. For example, a need called [code]hunger[/code] with a value of 0.2 would describe a very hungry agent.
-        This resource descibes how an individual need behaves. Needs are described and matched by string name elsewhere, so this resource is only used internally by the agent to control the need in the [UtilityServer].
-        Needs can have response curves as well, to control how an agent feels about a need. For example, a [code]sleep[/code] need may not affect an agent linearly - a sleep value of 0.0 is extreme tiredness, and 1.0 is fully rested, but a value of 0.5 might be still very rested, rather than half-tired. This can be represented by a curve mapping points from 0.0 to 1.0.
-        Needs can optionally decay over time. That is, a need value will decrease to zero over a set amount of time.
+		Agents have a set of needs that control how they think. These needs are described as a floating point value between 0.0 and 1.0. In general, a value of 1.0 is the best, where the need is totally fulfilled, and 0.0 is the worst state where the need is very severe. For example, a need called [code]hunger[/code] with a value of 0.2 would describe a very hungry agent.
+                This resource descibes how an individual need behaves. Needs are described and matched by string name elsewhere, so this resource is only used internally by the agent to control the need in the [UtilityServer].
+                Needs can have response curves as well, to control how an agent feels about a need. For example, a [code]sleep[/code] need may not affect an agent linearly - a sleep value of 0.0 is extreme tiredness, and 1.0 is fully rested, but a value of 0.5 might be still very rested, rather than half-tired. This can be represented by a curve mapping points from 0.0 to 1.0.
+                Needs can optionally decay over time. That is, a need value will decrease to zero over a set amount of time.
 	</description>
 	<tutorials>
 	</tutorials>
 	<members>
 		<member name="attenuation_weight" type="float" setter="set_attenuation_weight" getter="get_attenuation_weight" default="1.0">
-                This controls how much weight the agent will place upon this need. By default, all needs are considered equally. Increasing this value will make agents with this need emphasise performing actions that affect this need. Reducing it will make them care less about this need.
+			This controls how much weight the agent will place upon this need. By default, all needs are considered equally. Increasing this value will make agents with this need emphasise performing actions that affect this need. Reducing it will make them care less about this need.
 		</member>
 		<member name="decay_time" type="float" setter="set_decay_time" getter="get_decay_time" default="0.0">
-                If zero, this need does not decay.
-                If non-zero, the need will reduce to zero over that period of seconds in real time. For example, a value of 60.0 will mean that the need will decay from full to zero in one minute.
+			If zero, this need does not decay.
+                        If non-zero, the need will reduce to zero over that period of seconds in real time. For example, a value of 60.0 will mean that the need will decay from full to zero in one minute.
 		</member>
 		<member name="initial_value" type="float" setter="set_initial_value" getter="get_initial_value" default="0.5">
-                The default initial value for the need when the agent is created. Typically you will want to randomly fuzz the agent's initial need values with [method Agent.grant] so all agents have slightly different initial conditions.
+			The default initial value for the need when the agent is created. Typically you will want to randomly fuzz the agent's initial need values with [method Agent.grant] so all agents have slightly different initial conditions.
 		</member>
 		<member name="name" type="String" setter="set_name" getter="get_name" default="&quot;&quot;">
-                The need's name, which is matched with [member Action.advert] and [method Agent.grant]. An agent cannot have more than one need with the same name.
+			The need's name, which is matched with [member Action.advert] and [method Agent.grant]. An agent cannot have more than one need with the same name.
 		</member>
 		<member name="response" type="Curve" setter="set_response" getter="get_response">
-                An optional response curve to affect how this need is considered.
+			An optional response curve to affect how this need is considered.
 		</member>
 	</members>
 </class>

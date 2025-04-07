@@ -222,12 +222,12 @@ void UtilityServer::_bind_methods()
     ClassDB::bind_method(D_METHOD("action_set_active", "rid", "active"), &UtilityServer::action_set_active);
     ClassDB::bind_method(D_METHOD("action_set_advert", "rid", "advert"), &UtilityServer::action_set_advert);
     ClassDB::bind_method(D_METHOD("action_set_spatial_weight", "rid", "spatial_weight"), &UtilityServer::action_set_spatial_weight);
-    ClassDB::bind_method(D_METHOD("aciton_set_position", "rid", "position"), &UtilityServer::action_set_position);
+    ClassDB::bind_method(D_METHOD("action_set_position", "rid", "position"), &UtilityServer::action_set_position);
     ClassDB::bind_method(D_METHOD("action_set_object_id", "rid", "instance_id"), &UtilityServer::action_set_object_id);
     ClassDB::bind_method(D_METHOD("action_set_tags", "rid", "tags"), &UtilityServer::action_set_tags);
 
     ClassDB::bind_method(D_METHOD("agent_choose_action", "rid", "position", "near_distance", "far_distance", "tags"), &UtilityServer::agent_choose_action);
-    ClassDB::bind_method(D_METHOD("agent_grant", "rid", "reward"), &UtilityServer::action_set_object_id);
+    ClassDB::bind_method(D_METHOD("agent_grant", "rid", "reward"), &UtilityServer::agent_grant);
 }
 
 UtilityServer* UtilityServer::get_singleton()
