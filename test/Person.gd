@@ -131,26 +131,32 @@ func start_next_task() -> void:
 	_task_queue.append_array(_stashed_task_queue)
 	_stashed_task_queue.clear()
 	
+	# By default we probably won't want to interrupt this action with chatting
+	# This will be turned on for loitering only
 	%Chat.active = false
 	
 	# Nothing to do? Think of something
 	if _task_queue.is_empty():
 		if _current_task != Task.THINKING:
 			_current_task = Task.THINKING
+			
+			# Generate tags for the person's current situation
 			var tags := []
 			if not desk:
 				tags.append("unassigned")
 			if not held:
 				tags.append("empty-handed")
 			else:
-				# default to scene file name in lowercase
+				# Add a tag about the item being held
+				# Let's try to generate a name from the scene file
 				var type = held.scene_file_path.get_file().left(-5).to_lower()
-				# but if the scene has an object_name variable, use that instead
+				# but if the item has an object_name variable, use that instead
 				if "object_name" in held:
 					type = held.object_name
 				
 				tags.append("holding-" + type)
 				
+				# Consumable items have some groups we can tag too
 				if held.is_in_group("drink"):
 					tags.append("holding-drink")
 				elif held.is_in_group("food"):
@@ -159,10 +165,13 @@ func start_next_task() -> void:
 			%Agent.choose_action(150.0, 250.0, tags)
 		return
 	
+	# Doing the next task
 	var task = _task_queue.pop_front()
 	_current_task = task[0]
 	
-	_wait_left = 0.1
+	# Set a small default delay for this task, because most tasks are quick
+	_wait_left = 0.15
+	
 	match _current_task:
 		Task.WAIT:
 			_wait_left = task[1]
@@ -171,6 +180,9 @@ func start_next_task() -> void:
 			_walk_direction = Vector2.ZERO
 			%NavAgent.target_desired_distance = task[2]
 			%NavAgent.target_position = task[1]
+			
+			# We don't want to time out the walk_to task
+			# It ends when the destination is reached (or fails if it is unreachable)
 			_wait_left = -1
 		
 		Task.REWARD:
@@ -242,6 +254,7 @@ func start_next_task() -> void:
 			_wait_left = task[1]
 		
 		Task.QUEUE_FREE:
+			# Tidy up dependencies and free self
 			if desk:
 				desk.unassign()
 			if used_object:
@@ -256,14 +269,14 @@ func fail_task() -> void:
 	_task_queue.clear()
 	_stashed_task_queue.clear()
 	
+	# Reset use attempts for next time
 	_use_attempts = USE_ATTEMPTS
 	
 	start_next_task()
 
 
-
 func _on_agent_action_chosen(action: Action) -> void:
-	# probe action for what to do
+	# Probe action for what to do
 	var node = action.owner
 	if node.has_method("plan"):
 		node.plan(self, action)
@@ -275,7 +288,7 @@ func _on_agent_action_chosen(action: Action) -> void:
 
 
 func _on_agent_no_action_chosen() -> void:
-	# Not much work doing. Loiter for a bit.
+	# Nothing worth doing. Loiter for a bit.
 	do_loiter(5.0)
 	start_next_task()
 
@@ -305,36 +318,51 @@ func grab_object(object: Node2D) -> void:
 
 
 func _process(delta: float) -> void:
+	# Turn sprite around if walking left vs right
 	if abs(_walk_direction.x) > 0.15:
 		%Sprite.flip_h = _walk_direction.x < 0.0
 	
+	# Are we walking somewhere?
 	if _current_task == Task.WALK_TO:
+		# Find out what direction the next path position is
 		var offset : Vector2 = %NavAgent.get_next_path_position() - position
 		var ideal := offset.normalized()
 		
+		# If we're still, go in that direction
 		if _walk_direction == Vector2.ZERO:
 			_walk_direction = ideal
 		
+		# Accelerate quick to WALK_SPEED
 		_walk_speed = lerp(_walk_speed, WALK_SPEED, 0.5)
 		velocity = _walk_speed * _walk_direction
+		
+		# Did we bump?
 		if move_and_slide():
+			# Move away from wall, and suffer a small speed reduction
 			ideal = get_last_slide_collision().get_normal()
 			_walk_speed = max(0.0, _walk_speed - 10.0)
-	
+		
+		# Turn a little bit towards the angle we should be going
 		var angle := _walk_direction.angle_to(ideal)
 		angle = clampf(angle, -0.2, 0.2)
 		_walk_direction = _walk_direction.rotated(angle)
-	
+		
+		# Reached end of path / failed ?
 		if %NavAgent.is_target_reached() or %NavAgent.is_navigation_finished():
 			start_next_task()
 		if not %NavAgent.is_target_reachable():
 			fail_task()
+	
+	# Are we loitering instead?
 	elif _current_task == Task.LOITER:
+		# Walk slowly in a random direction
 		velocity = LOITER_SPEED * _walk_direction
+		
+		# Hit something? Then just pick a new direction
 		if move_and_slide():
 			_walk_direction = Vector2.RIGHT.rotated(randf() * TAU)
 	
-	# if this is a task that times out, check the time out
+	# If this is a task that times out, calculate the time
 	if _current_task not in [Task.THINKING, Task.WALK_TO]:
 		_wait_left -= delta
 		if _wait_left < 0.0:
@@ -342,6 +370,7 @@ func _process(delta: float) -> void:
 
 
 func get_need_values() -> Dictionary:
+	# Return need values for tooltip
 	return {
 		"hunger": %Agent.get_need_value("hunger"),
 		"thirst": %Agent.get_need_value("thirst"),
@@ -353,17 +382,18 @@ func get_need_values() -> Dictionary:
 
 func plan(person: Person, action: Action) -> void:
 	if action == %Chat:
-		# someone's chatting with me!!
+		# Someone's chatting with me!!
 		person.do_walk_to(self)
 		person.do_wait(3.0, 3.0)
 		person.do_reward(action.advert)
 		
-		# fix the front pushing here, and in general
+		# Interrupt our current task to chat with them
 		do_stash_tasks()
 		do_wait(4.0, 4.0)
 		do_reward(action.advert)
 		start_next_task()
 		
+		# Show indicators for a short time
 		chat_indicator.visible = true
 		person.chat_indicator.visible = true
 		await get_tree().create_timer(3.0).timeout
