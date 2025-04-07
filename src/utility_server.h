@@ -64,6 +64,7 @@ class UtilityServer : public godot::Object
     godot::Semaphore* m_work_semaphore{nullptr};
     godot::Vector<ThinkRequest> m_requests;
     godot::Vector<godot::RID> m_free_queue;
+    bool m_work_complete{true};
 
     bool m_initialized_process_callback{false};
 

@@ -37,6 +37,7 @@ void UtilityServer::thread_func()
         if (pending_think)
             think(next);
 
+        m_work_complete = true;
         const uint64_t post_time = Time::get_singleton()->get_ticks_usec();
         m_last_step_time = post_time - pre_time;
     }
@@ -505,7 +506,11 @@ void UtilityServer::agent_grant(godot::RID agent, const godot::TypedDictionary<g
 
 void UtilityServer::step()
 {
-    m_work_semaphore->post(); // cause thread to iterate once
+    if (m_work_complete)
+    {
+        m_work_complete = false;
+        m_work_semaphore->post(); // cause thread to iterate once
+    }
 
     if (EngineDebugger::get_singleton()->is_profiling("servers"))
     {
