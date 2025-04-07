@@ -67,6 +67,8 @@ class UtilityServer : public godot::Object
 
     bool m_initialized_process_callback{false};
 
+    uint64_t m_last_step_time{0};
+
     static UtilityServer* s_singleton;
     void thread_func();
     void purge_free_queue();

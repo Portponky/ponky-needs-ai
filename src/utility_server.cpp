@@ -6,6 +6,7 @@
 #include <godot_cpp/variant/callable.hpp>
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/main_loop.hpp>
+#include <godot_cpp/classes/engine_debugger.hpp>
 
 using namespace godot;
 
@@ -16,6 +17,8 @@ void UtilityServer::thread_func()
     while (!m_exit_thread)
     {
         m_work_semaphore->wait();
+
+        const uint64_t pre_time = Time::get_singleton()->get_ticks_usec();
 
         purge_free_queue();
 
@@ -33,6 +36,9 @@ void UtilityServer::thread_func()
 
         if (pending_think)
             think(next);
+
+        const uint64_t post_time = Time::get_singleton()->get_ticks_usec();
+        m_last_step_time = post_time - pre_time;
     }
 }
 
@@ -501,8 +507,14 @@ void UtilityServer::step()
 {
     m_work_semaphore->post(); // cause thread to iterate once
 
-    // report times, etc.
-    // something like if (EditorDebugger::get_singleton()->is_profiling())
+    if (EngineDebugger::get_singleton()->is_profiling("servers"))
+    {
+        Array times;
+        times.append("UtilityServer");
+        times.append("calculate_think");
+        times.append(0.000001 * m_last_step_time);
+        EngineDebugger::get_singleton()->profiler_add_frame_data("servers", times);
+    }
 }
 
 UtilityServer::UtilityServer()
