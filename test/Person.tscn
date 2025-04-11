@@ -70,7 +70,7 @@ texture = ExtResource("1_0dfyj")
 [node name="NavAgent" type="NavigationAgent2D" parent="."]
 unique_name_in_owner = true
 path_desired_distance = 10.0
-path_max_distance = 30.0
+path_max_distance = 15.0
 
 [node name="Agent" type="Agent" parent="."]
 needs = Array[Need]([SubResource("Need_hopiu"), SubResource("Need_btgww"), SubResource("Need_18vio"), SubResource("Need_l3e8t"), SubResource("Need_w1m2r")])
