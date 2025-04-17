@@ -27,6 +27,9 @@ public:
     void set_active(bool active);
     bool get_active() const;
 
+    void set_stock(int stock);
+    int get_stock() const;
+
     void set_spatial_weight(float weight);
     float get_spatial_weight() const;
 

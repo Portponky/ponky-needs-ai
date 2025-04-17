@@ -8,7 +8,8 @@ var object_name = "frozen-meal"
 func _enter_tree() -> void:
 	# Are we being held? If so, can't be picked up
 	var holder = get_parent() as Person
-	%PickUp.active = holder == null
+	if !holder:
+		%PickUp.stock = 1
 
 
 func plan(person: Person, action: Action) -> void:
@@ -16,6 +17,5 @@ func plan(person: Person, action: Action) -> void:
 		# Person wants the frozen meal, so they grab it
 		person.do_walk_to(self)
 		person.do_grab(self)
-		%PickUp.active = false
 		
 		# Now they must figure out how to heat it for the reward

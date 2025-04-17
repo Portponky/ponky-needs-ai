@@ -38,6 +38,7 @@ class UtilityServer : public godot::Object
     {
         godot::RBMap<godot::String, float> advert;
         bool active{false};
+        int stock{-1};
         float spatial_weight{1.0};
         godot::Vector2 position;
         godot::ObjectID instance_id;
@@ -104,6 +105,8 @@ public:
 
     // Action settings
     void action_set_active(godot::RID action, bool active);
+    void action_set_stock(godot::RID action, int stock);
+    int action_get_stock(godot::RID action) const;
     void action_set_advert(godot::RID action, const godot::TypedDictionary<godot::String, float>& advert);
     void action_set_spatial_weight(godot::RID action, float spatial_weight);
     void action_set_position(godot::RID action, const godot::Vector2& position);

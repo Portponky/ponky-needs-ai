@@ -15,10 +15,9 @@ func plan(person: Person, action: Action) -> void:
 		person.do_reward(action.advert)
 		
 		# Once this action is selected, wait a while before it's reselected
-		action.active = false
 		%Timer.start()
 
 
 func _on_timer_timeout() -> void:
 	# Toilet is ready for use again
-	%Poop.active = true
+	%Poop.stock = 1

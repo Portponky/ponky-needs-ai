@@ -7,11 +7,12 @@ func _enter_tree() -> void:
 	var holder = get_parent() as Person
 	
 	# Activate actions that are relevant
-	%PickUp.active = holder == null
 	%Drink.active = holder != null
 	if holder:
 		# If being held, only the person holding it can drink
 		%Drink.tags = [holder.full_name]
+	else:
+		%PickUp.stock = 1
 
 
 func plan(person: Person, action: Action) -> void:
@@ -19,7 +20,6 @@ func plan(person: Person, action: Action) -> void:
 		# Selected to be picked up. Disable others from picking it up.
 		person.do_walk_to(self)
 		person.do_grab(self)
-		%PickUp.active = false
 	
 	elif action == %Drink:
 		# Take a drink of water

@@ -27,10 +27,9 @@ func plan(person: Person, action: Action) -> void:
 		
 		# Once used, the copier has a cooldown period to prevent people from
 		# copying paper indefinitely
-		%CopySomething.active = false
 		%Timer.start()
 
 
 func _on_timer_timeout() -> void:
 	# Copier is ready to copy again
-	%CopySomething.active = true
+	%CopySomething.stock = 1

@@ -15,7 +15,7 @@ advert = Dictionary[String, float]({
 "social": 0.05,
 "work": 0.38
 })
-active = false
+stock = 0
 spatial_weight = 1.5
 tags = Array[String](["empty-handed"])
 unique_name_in_owner = true

@@ -19,7 +19,7 @@ advert = Dictionary[String, float]({
 "social": 0.08,
 "thirst": 0.25
 })
-active = false
+stock = 0
 spatial_weight = 1.2
 tags = Array[String](["-holding-drink", "-holding-food"])
 unique_name_in_owner = true
@@ -30,6 +30,7 @@ advert = Dictionary[String, float]({
 "thirst": 0.25
 })
 active = false
+stock = 2
 unique_name_in_owner = true
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

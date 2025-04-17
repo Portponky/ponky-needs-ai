@@ -14,7 +14,7 @@ advert = Dictionary[String, float]({
 "hunger": 0.3,
 "social": 0.08
 })
-active = false
+stock = 0
 spatial_weight = 1.4
 tags = Array[String](["-holding-food"])
 unique_name_in_owner = true

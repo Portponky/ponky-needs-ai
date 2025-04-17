@@ -7,7 +7,6 @@ func plan(person: Person, action: Action) -> void:
 	if action == %GetWorker:
 		# A person wants to use this desk
 		person.desk = self
-		action.active = false
 		
 		# Set the tags for doing work for this person, and only when they are empty-handed
 		%DoWork.set_tags(["empty-handed", person.full_name])
@@ -33,5 +32,5 @@ func plan(person: Person, action: Action) -> void:
 
 func unassign() -> void:
 	# The desk's person has left, so reset the actions
-	%GetWorker.active = true
+	%GetWorker.stock = 1
 	%DoWork.active = false

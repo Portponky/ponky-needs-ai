@@ -24,6 +24,7 @@ position = Vector2(0, 6)
 advert = Dictionary[String, float]({
 "work": 0.2
 })
+stock = 1
 spatial_weight = 0.0
 tags = Array[String](["unassigned"])
 unique_name_in_owner = true

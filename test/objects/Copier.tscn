@@ -21,6 +21,7 @@ advert = Dictionary[String, float]({
 "social": 0.02,
 "work": 0.32
 })
+stock = 1
 tags = Array[String](["holding-paper"])
 unique_name_in_owner = true
 

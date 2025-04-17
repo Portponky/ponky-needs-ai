@@ -13,7 +13,7 @@ texture = ExtResource("1_ilpto")
 advert = Dictionary[String, float]({
 "hunger": 0.66
 })
-active = false
+stock = 0
 spatial_weight = 1.2
 tags = Array[String](["-holding-food"])
 unique_name_in_owner = true

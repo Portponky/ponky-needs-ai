@@ -26,6 +26,11 @@ void Action::_bind_methods()
 
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "active"), "set_active", "get_active");
 
+    ClassDB::bind_method(D_METHOD("set_stock", "stock"), &Action::set_stock);
+    ClassDB::bind_method(D_METHOD("get_stock"), &Action::get_stock);
+
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "stock", PROPERTY_HINT_RANGE, "-1,99,or_greater"), "set_stock", "get_stock");
+
     ClassDB::bind_method(D_METHOD("set_spatial_weight", "weight"), &Action::set_spatial_weight);
     ClassDB::bind_method(D_METHOD("get_spatial_weight"), &Action::get_spatial_weight);
 
@@ -81,6 +86,16 @@ void Action::set_active(bool active)
 bool Action::get_active() const
 {
     return m_active;
+}
+
+void Action::set_stock(int stock)
+{
+    UtilityServer::get_singleton()->action_set_stock(m_rid, stock);
+}
+
+int Action::get_stock() const
+{
+    return UtilityServer::get_singleton()->action_get_stock(m_rid);
 }
 
 void Action::set_spatial_weight(float weight)

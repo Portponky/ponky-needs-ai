@@ -5,7 +5,8 @@ extends Node2D
 func _enter_tree() -> void:
 	# Are we being held? Then we can't be picked up
 	var held = get_parent() is Person
-	%PickUp.active = !held
+	if !held:
+		%PickUp.stock = 1
 
 
 func plan(person: Person, action: Action) -> void:
@@ -13,4 +14,3 @@ func plan(person: Person, action: Action) -> void:
 		# Person is going to pick up this piece of paper
 		person.do_walk_to(self)
 		person.do_grab(self)
-		%PickUp.active = false

@@ -86,7 +86,7 @@ void UtilityServer::think(const ThinkRequest& t)
     if (!ag)
         return; // already deleted
 
-    Vector<ObjectID> choices;
+    Vector<InternalAction*> choices;
     Vector<float> scores;
     float best{0.0f};
     float worst{0.0f};
@@ -96,7 +96,7 @@ void UtilityServer::think(const ThinkRequest& t)
     for (RID rid : list)
     {
         InternalAction* ac = m_actions.get_or_null(rid);
-        if (!ac || !ac->active)
+        if (!ac || !ac->active || ac->stock == 0)
             continue; // already deleted
 
         // filters
@@ -133,7 +133,7 @@ void UtilityServer::think(const ThinkRequest& t)
 
         if (score > worst)
         {
-            choices.append(ac->instance_id);
+            choices.append(ac);
             scores.push_back(score);
 
             if (score > best)
@@ -165,7 +165,7 @@ void UtilityServer::think(const ThinkRequest& t)
     }
 
     total_weight *= UtilityFunctions::randf();
-    ObjectID chosen = choices[choices.size() - 1]; // default last choice
+    InternalAction* chosen = choices[choices.size() - 1]; // default last choice
     for (int n = 0; n < choices.size() - 1; ++n)
     {
         total_weight -= weights[n];
@@ -176,7 +176,10 @@ void UtilityServer::think(const ThinkRequest& t)
         }
     }
 
-    ag->action_callback.call_deferred(chosen);
+    if (chosen->stock > 0)
+        --chosen->stock;
+
+    ag->action_callback.call_deferred(chosen->instance_id);
 }
 
 UtilityServer::InternalAgent* UtilityServer::get_agent_with_decays(RID agent)
@@ -220,6 +223,8 @@ void UtilityServer::_bind_methods()
     ClassDB::bind_method(D_METHOD("agent_set_need_score", "rid", "need", "value"), &UtilityServer::agent_set_need_score);
 
     ClassDB::bind_method(D_METHOD("action_set_active", "rid", "active"), &UtilityServer::action_set_active);
+    ClassDB::bind_method(D_METHOD("action_set_stock", "rid", "stock"), &UtilityServer::action_set_stock);
+    ClassDB::bind_method(D_METHOD("action_get_stock", "rid"), &UtilityServer::action_get_stock);
     ClassDB::bind_method(D_METHOD("action_set_advert", "rid", "advert"), &UtilityServer::action_set_advert);
     ClassDB::bind_method(D_METHOD("action_set_spatial_weight", "rid", "spatial_weight"), &UtilityServer::action_set_spatial_weight);
     ClassDB::bind_method(D_METHOD("action_set_position", "rid", "position"), &UtilityServer::action_set_position);
@@ -422,6 +427,22 @@ void UtilityServer::action_set_active(RID action, bool active)
     ERR_FAIL_NULL(a);
 
     a->active = active;
+}
+
+void UtilityServer::action_set_stock(godot::RID action, int stock)
+{
+    InternalAction* a = m_actions.get_or_null(action);
+    ERR_FAIL_NULL(a);
+
+    a->stock = stock;
+}
+
+int UtilityServer::action_get_stock(godot::RID action) const
+{
+    InternalAction* a = m_actions.get_or_null(action);
+    ERR_FAIL_NULL_V(a, -1);
+
+    return a->stock;
 }
 
 void UtilityServer::action_set_advert(RID action, const TypedDictionary<String, float>& advert)
