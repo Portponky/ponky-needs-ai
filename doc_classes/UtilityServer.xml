@@ -18,6 +18,21 @@
                         Changes whether the action specified by rid is active for agents to select.
 			</description>
 		</method>
+                <method name="action_set_stock">
+                        <return type="void" />
+                        <param index="0" name="rid" type="RID" />
+                        <param index="1" name="stock" type="int" />
+                        <description>
+                        Sets the number of times the action can be chosen before it is unchoosable. -1 means infinite.
+                        </description>
+                </method>
+                <method name="action_get_stock">
+                        <return type="int" />
+                        <param index="0" name="rid" type="RID" />
+                        <description>
+                        Gets the current remaining stock of the action.
+                        </description>
+                </method>
 		<method name="action_set_advert">
 			<return type="void" />
 			<param index="0" name="rid" type="RID" />

@@ -38,7 +38,11 @@
 		<member name="active" type="bool" setter="set_active" getter="get_active" default="true">
                 Controls if the action can be chosen at the moment. If disabled as a response to an agent choosing it, no other agent will choose it even if they are currently thinking.
 		</member>
-		<member name="advert" type="Dictionary[String, float]" setter="set_advert" getter="get_advert" default="{}">
+                <member name="stock" type="int" setter="set_stock" getter="get_stock" default="-1">
+                How many times the action can be chosen before it becomes inactive. A stock of -1 means the action can be chosen infinitely.
+                If the stock is zero, the action cannot be chosen, even if [member active] is true. The stock is reduced every time the [UtilityServer] chooses this action.
+                </member>
+                <member name="advert" type="Dictionary[String, float]" setter="set_advert" getter="get_advert" default="{}">
                 Shows how needs are affected by choosing this action.
                 Note that choosing this action doesn't actually affect the agent. so you probably want to do something like [code]my_agent.grant(chosen_action.advert)[/code] once the action is completed. See [member Agent.grant]. However, you are not required to adhere to granting what the action advertises - it is very powerful (and dangerous) to grant a different result to the agent. If you don't adjust the agent in response to the action, the agent will likely keep choosing the same action again and again.
                 [b]Warning[/b]: advert is a [Dictionary] property, which is a reference type. Altering the dictionary in place will not update the [UtilityServer]. If you change the advert, either do it by calling [code]set_advert[/code], or call [member update_advert] after changing it.
