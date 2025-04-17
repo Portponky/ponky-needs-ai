@@ -37,9 +37,8 @@ void UtilityServer::thread_func()
         if (pending_think)
             think(next);
 
-        m_work_complete = true;
         const uint64_t post_time = Time::get_singleton()->get_ticks_usec();
-        m_last_step_time = post_time - pre_time;
+        m_last_step_time += post_time - pre_time;
     }
 }
 
@@ -295,7 +294,8 @@ RID UtilityServer::create_agent()
     if (!m_initialized_process_callback)
     {
         m_initialized_process_callback = true;
-        Engine::get_singleton()->get_main_loop()->connect("process_frame", callable_mp(this, &UtilityServer::step));
+        if (OS::get_singleton()->is_debug_build())
+            Engine::get_singleton()->get_main_loop()->connect("process_frame", callable_mp(this, &UtilityServer::step));
     }
 
     InternalAgent* agent = memnew(InternalAgent);
@@ -510,6 +510,7 @@ void UtilityServer::agent_choose_action(godot::RID agent, godot::Vector2 positio
     m_input_mutex->lock();
     m_requests.append({agent, position, near_distance, far_distance, tag_set});
     m_input_mutex->unlock();
+    m_work_semaphore->post();
 }
 
 void UtilityServer::agent_grant(godot::RID agent, const godot::TypedDictionary<godot::String, float>& reward)
@@ -532,12 +533,6 @@ void UtilityServer::agent_grant(godot::RID agent, const godot::TypedDictionary<g
 
 void UtilityServer::step()
 {
-    if (m_work_complete)
-    {
-        m_work_complete = false;
-        m_work_semaphore->post(); // cause thread to iterate once
-    }
-
     if (EngineDebugger::get_singleton()->is_profiling("servers"))
     {
         Array times;
@@ -546,6 +541,8 @@ void UtilityServer::step()
         times.append(0.000001 * m_last_step_time);
         EngineDebugger::get_singleton()->profiler_add_frame_data("servers", times);
     }
+
+    m_last_step_time = 0;
 }
 
 UtilityServer::UtilityServer()
