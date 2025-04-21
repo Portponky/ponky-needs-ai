@@ -30,7 +30,7 @@ class UtilityServer : public godot::Object
 
         float consideration_fraction{0.9};
         float consideration_weight{0.0};
-        uint64_t last_decay_tick{0};
+        uint64_t last_decay_frame{0};
         bool decaying{false};
     };
 
@@ -75,7 +75,7 @@ class UtilityServer : public godot::Object
     bool filter(const ThinkRequest& t, InternalAction* action) const;
     void think(const ThinkRequest& t);
 
-    InternalAgent* get_agent_with_decays(godot::RID agent);
+    InternalAgent* get_agent_with_decays(godot::RID agent, bool force_calculation);
 
 protected:
     static void _bind_methods();

@@ -81,7 +81,7 @@ bool UtilityServer::filter(const ThinkRequest& t, InternalAction* action) const
 
 void UtilityServer::think(const ThinkRequest& t)
 {
-    InternalAgent* ag = get_agent_with_decays(t.agent);
+    InternalAgent* ag = get_agent_with_decays(t.agent, false);
     if (!ag)
         return; // already deleted
 
@@ -181,18 +181,20 @@ void UtilityServer::think(const ThinkRequest& t)
     ag->action_callback.call_deferred(chosen->instance_id);
 }
 
-UtilityServer::InternalAgent* UtilityServer::get_agent_with_decays(RID agent)
+UtilityServer::InternalAgent* UtilityServer::get_agent_with_decays(RID agent, bool force_calculation)
 {
     InternalAgent* a = m_agents.get_or_null(agent);
 
     if (a && a->decaying)
     {
-        const uint64_t ticks = Time::get_singleton()->get_ticks_msec();
-        const uint64_t diff = ticks - a->last_decay_tick;
-        constexpr uint64_t MINIMUM_DECAY_THRESHOLD = 100;
-        if (diff < MINIMUM_DECAY_THRESHOLD)
+        const uint64_t frame = Engine::get_singleton()->get_physics_frames();
+        const uint64_t diff = frame - a->last_decay_frame;
+        const float decay_seconds = static_cast<float>(diff) / Engine::get_singleton()->get_physics_ticks_per_second();
+
+        constexpr float MINIMUM_DECAY_THRESHOLD = 0.1f;
+        if (!force_calculation && decay_seconds < MINIMUM_DECAY_THRESHOLD)
             return a;
-        const float decay_seconds = 0.001f * diff;
+
         for (int n = 0; n < a->needs.size(); ++n)
         {
             if (a->needs[n]->get_decay_time() == 0.0)
@@ -200,7 +202,7 @@ UtilityServer::InternalAgent* UtilityServer::get_agent_with_decays(RID agent)
 
             a->values.write[n] = UtilityFunctions::clampf(a->values[n] - decay_seconds / a->needs[n]->get_decay_time(), 0.0f, 1.0f);
         }
-        a->last_decay_tick = ticks;
+        a->last_decay_frame = frame;
     }
 
     return a;
@@ -324,7 +326,7 @@ void UtilityServer::free_rid(RID rid)
 
 void UtilityServer::agent_set_needs(RID agent, const TypedArray<Need>& needs)
 {
-    InternalAgent* a = get_agent_with_decays(agent);
+    InternalAgent* a = get_agent_with_decays(agent, false);
     ERR_FAIL_NULL(a);
 
     RBMap<String, float> prev_values;
@@ -396,14 +398,13 @@ void UtilityServer::agent_set_decaying(godot::RID agent, bool decaying)
     if (a->decaying == decaying)
         return;
 
-    a = get_agent_with_decays(agent);
+    a = get_agent_with_decays(agent, true);
     a->decaying = decaying;
-    a->last_decay_tick = Time::get_singleton()->get_ticks_msec();
 }
 
 float UtilityServer::agent_get_need_score(RID agent, const String& need)
 {
-    InternalAgent* a = get_agent_with_decays(agent);
+    InternalAgent* a = get_agent_with_decays(agent, false);
     ERR_FAIL_NULL_V(a, 0.0f);
 
     decltype(a->indices)::Element* v = a->indices.find(need);
@@ -515,7 +516,7 @@ void UtilityServer::agent_choose_action(godot::RID agent, godot::Vector2 positio
 
 void UtilityServer::agent_grant(godot::RID agent, const godot::TypedDictionary<godot::String, float>& reward)
 {
-    InternalAgent* a = get_agent_with_decays(agent);
+    InternalAgent* a = get_agent_with_decays(agent, false);
     ERR_FAIL_NULL(a);
 
     Array keys = reward.keys();
