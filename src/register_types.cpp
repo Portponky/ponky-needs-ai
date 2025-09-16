@@ -9,6 +9,7 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/os.hpp>
 
 using namespace godot;
 
@@ -50,17 +51,24 @@ void uninitialize_utility_ai(ModuleInitializationLevel p_level)
     }
 }
 
+void step_utility_ai()
+{
+    s_utility_server->step();
+}
+
 extern "C" {
 
 GDExtensionBool GDE_EXPORT utility_ai_library_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization)
 {
-	godot::GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
+    godot::GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
 
-	init_obj.register_initializer(initialize_utility_ai);
-	init_obj.register_terminator(uninitialize_utility_ai);
+    init_obj.register_initializer(initialize_utility_ai);
+    init_obj.register_terminator(uninitialize_utility_ai);
     init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
 
-	return init_obj.init();
+    init_obj.register_frame_callback(step_utility_ai);
+
+    return init_obj.init();
 }
 
 }

@@ -66,7 +66,6 @@ class UtilityServer : public godot::Object
     godot::Vector<ThinkRequest> m_requests;
     godot::Vector<godot::RID> m_free_queue;
 
-    bool m_initialized_process_callback{false};
     uint64_t m_last_step_time{0};
 
     static UtilityServer* s_singleton;

@@ -293,13 +293,6 @@ void UtilityServer::finish()
 
 RID UtilityServer::create_agent()
 {
-    if (!m_initialized_process_callback)
-    {
-        m_initialized_process_callback = true;
-        if (OS::get_singleton()->is_debug_build())
-            Engine::get_singleton()->get_main_loop()->connect("process_frame", callable_mp(this, &UtilityServer::step));
-    }
-
     InternalAgent* agent = memnew(InternalAgent);
     RID rid = m_agents.make_rid(agent);
     return rid;
@@ -534,6 +527,9 @@ void UtilityServer::agent_grant(godot::RID agent, const godot::TypedDictionary<g
 
 void UtilityServer::step()
 {
+    if (!OS::get_singleton()->is_debug_build())
+        return;
+
     if (EngineDebugger::get_singleton()->is_profiling("servers"))
     {
         Array times;
